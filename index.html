@@ -302,6 +302,11 @@
             font-size: 14px;
         }
 
+        #chatBox {
+    scroll-behavior: smooth;
+        }
+        
+
                 /* ============= LAYAR RECAPTCHA ============= */
         #captchaScreen {
             position: fixed;
@@ -680,36 +685,50 @@
         // 📥 MUAT PESAN
         // ==============================================
         async function muatPesanLama() {
-             try {
-                 const hariIni = new Date().toDateString();
-                 const { data, error } = await sb
-                     .from('pesan')
-                     .select('*')
-                     .eq('tanggal', hariIni)
-                     .order('created_at', { ascending: true });
-                 
-                 if (error) throw error;
-                 
-                 const chatBox = document.getElementById('chatBox');
-                 if (!chatBox) return;
-                 
-                 // Simpan pesan sistem
-                 const sistem = chatBox.querySelector('.msg-system');
-                 chatBox.innerHTML = '';
-                 if (sistem) chatBox.appendChild(sistem);
-                 
-                 data.forEach(p => tampilkanPesan(p));
-                 
-                 // Update total chat
-                 const total = data.length;
-                 document.getElementById('totalChat').textContent = total;
-                 
-                 // Auto scroll ke bawah
-                 chatBox.scrollTop = chatBox.scrollHeight;
-             } catch (err) {
-                 console.error('Error muat:', err);
-             }
-         }
+    try {
+        const hariIni = new Date().toDateString();
+        const { data, error } = await supabase
+            .from('pesan')
+            .select('*')
+            .eq('tanggal', hariIni)
+            .order('created_at', { ascending: true });
+        
+        if (error) throw error;
+        
+        const chatBox = document.getElementById('chatBox');
+        if (!chatBox) return;
+
+        // ✅ Simpan posisi scroll sekarang
+        const posisiScroll = chatBox.scrollTop;
+        const tinggiBox = chatBox.scrollHeight;
+        const diBawah = (posisiScroll + chatBox.clientHeight) >= tinggiBox - 50;
+
+        // ✅ Hanya tambah pesan BARU, jangan hapus yang lama
+        const pesanYangAda = new Set();
+        chatBox.querySelectorAll('[data-msg-id]').forEach(el => {
+            pesanYangAda.add(el.getAttribute('data-msg-id'));
+        });
+
+        data.forEach(pesan => {
+            if (!pesanYangAda.has(pesan.id)) {
+                tampilkanPesan(pesan);
+            }
+        });
+
+        // ✅ Kalau user ada di paling bawah → tetap di bawah
+        if (diBawah) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        // Kalau user sedang baca di atas → jangan pindahkan posisinya
+
+        // Update total chat
+        document.getElementById('totalChat').textContent = data.length;
+
+    } catch (err) {
+        console.error('Error muat pesan:', err);
+    }
+}
+
          function mulaiDengarkanPesan() {
              if (langgananPesan) langgananPesan.unsubscribe();
              
