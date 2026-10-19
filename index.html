@@ -687,7 +687,7 @@
         async function muatPesanLama() {
     try {
         const hariIni = new Date().toDateString();
-        const { data, error } = await supabase
+        const { data, error } = await sb
             .from('pesan')
             .select('*')
             .eq('tanggal', hariIni)
