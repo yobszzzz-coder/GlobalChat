@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global Chat</title>
+        <!-- Script Google reCAPTCHA -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @font-face {
@@ -298,10 +301,58 @@
             margin-bottom: 20px;
             font-size: 14px;
         }
+
+                /* ============= LAYAR RECAPTCHA ============= */
+        #captchaScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #F8F5EB;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 150;
+            padding: 20px;
+        }
+
+        #captchaScreen.hidden {
+            display: none !important;
+        }
+
+        .g-recaptcha {
+            display: flex;
+            justify-content: center;
+        }
+        
     </style>
 </head>
 <body>
 
+    <!-- LAYAR VERIFIKASI RECAPTCHA -->
+    <div id="captchaScreen">
+        <div class="name-card">
+            <h2>🔐 VERIFIKASI</h2>
+            <p style="margin-bottom:20px">Centang kotak di bawah untuk membuktikan bahwa kamu bukan robot</p>
+            
+            <!-- Kotak reCAPTCHA Google -->
+            <div class="g-recaptcha" 
+                 data-sitekey="ISI-SITE-KEY-KAMU-DARI-LANGKAH-1"
+                 data-callback="berhasilVerifikasi"
+                 data-expired-callback="ulangiVerifikasi">
+            </div>
+            
+            <p id="statusVerifikasi" style="margin-top:15px; font-size:13px; color:#666">Belum diverifikasi</p>
+        </div>
+    </div>
+
+    <!-- LAYAR MASUK NAMA -->
+    <div id="nameScreen">
+        <!-- ... isi lama kamu tetap di sini ... -->
+    </div>
+    
+    
     <!-- LAYAR MASUK NAMA -->
     <div id="nameScreen">
         <div class="name-card">
@@ -347,6 +398,49 @@
         </div>
     </div>
     <script>
+                // ==============================================
+        // 🔐 VERIFIKASI RECAPTCHA
+        // ==============================================
+        let sudahVerifikasi = false;
+
+        function berhasilVerifikasi() {
+            sudahVerifikasi = true;
+            document.getElementById('statusVerifikasi').textContent = '✅ Terverifikasi!';
+            document.getElementById('statusVerifikasi').style.color = '#22C55E';
+            
+            setTimeout(() => {
+                document.getElementById('captchaScreen').classList.add('hidden');
+            }, 600);
+        }
+
+        function ulangiVerifikasi() {
+            sudahVerifikasi = false;
+            document.getElementById('statusVerifikasi').textContent = '⚠️ Silakan centang ulang';
+            document.getElementById('statusVerifikasi').style.color = '#EF4444';
+        }
+
+        // Sebelum simpan nama, pastikan sudah verifikasi
+        async function simpanNama() {
+            if (!sudahVerifikasi) {
+                tampilkanAlert('Silakan verifikasi terlebih dahulu!');
+                return;
+            }
+            
+            const input = document.getElementById('namaInput');
+            const nama = input.value.trim();
+            
+            if (nama.length < 3) {
+                tampilkanAlert('Nama minimal 3 huruf!');
+                return;
+            }
+            
+            namaPengguna = nama;
+            localStorage.setItem('gc_nama', namaPengguna);
+            document.getElementById('nameScreen').classList.add('hidden');
+            document.getElementById('chatPage').classList.add('show');
+            masukKeChat();
+                }
+        
         // ==============================================
         // ⚙️ KONFIGURASI — GANTI DENGAN MILIKMU
         // ==============================================
@@ -423,16 +517,23 @@
         // ==============================================
         // 🚀 INISIALISASI
         // ==============================================
-        document.addEventListener('DOMContentLoaded', () => {
+                document.addEventListener('DOMContentLoaded', () => {
             tampilkanTanggal();
             cekResetHarian();
             
+            // Cek apakah sudah pernah verifikasi + punya nama
             if (namaPengguna && namaPengguna.length >= 3) {
+                document.getElementById('captchaScreen').classList.add('hidden');
                 document.getElementById('nameScreen').classList.add('hidden');
                 document.getElementById('chatPage').classList.add('show');
                 masukKeChat();
+            } else if (namaPengguna && namaPengguna.length < 3) {
+                // Punya nama tapi belum lengkap → lanjut ke nama
+                document.getElementById('captchaScreen').classList.add('hidden');
             }
+            // Kalau belum verifikasi → tetap di layar captcha
         });
+
 
         // ==============================================
         // 👤 MASUK NAMA — TIDAK BISA GANTI
