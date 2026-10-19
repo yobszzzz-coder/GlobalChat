@@ -330,6 +330,62 @@
             display: flex;
             justify-content: center;
         }
+
+                /* ============= REPLY CHAT ============= */
+        .msg-wrapper {
+            position: relative;
+        }
+
+        /* Kotak pesan yang akan dibalas */
+        .reply-preview {
+            background: rgba(59, 130, 212, 0.1);
+            border-left: 4px solid var(--biru);
+            padding: 6px 10px;
+            margin-bottom: 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .reply-preview .nama-pengirim {
+            font-weight: bold;
+            color: var(--biru);
+            margin-right: 6px;
+        }
+
+        .reply-preview .teks-pesan {
+            color: #444;
+            opacity: 0.8;
+        }
+
+        .reply-preview .tutup-reply {
+            cursor: pointer;
+            font-size: 16px;
+            color: #888;
+            padding: 0 6px;
+            flex-shrink: 0;
+        }
+
+        .reply-preview .tutup-reply:hover {
+            color: #000;
+        }
+
+        /* Tampilan pesan yang dibalas di dalam chat */
+        .dibalas-dalam-pesan {
+            background: rgba(0,0,0,0.05);
+            border-left: 3px solid var(--biru);
+            padding: 4px 8px;
+            margin-bottom: 4px;
+            font-size: 12px;
+            opacity: 0.8;
+            border-radius: 3px;
+        }
         
     </style>
 </head>
@@ -382,11 +438,21 @@
             <div id="chatBox"></div>
         </div>
 
-        <div class="input-bar">
-            <input type="text" id="pesanInput" placeholder="Ketik pesan..." autocomplete="off" onkeypress="if(event.key==='Enter')kirimPesan()">
-            <button class="send-btn" id="kirimBtn" onclick="kirimPesan()">➤</button>
-        </div>
-    </div>
+             <!-- KOTAK PREVIEW PESAN YANG DIBALAS -->
+<div id="replyPreviewBox" class="reply-preview" style="display:none; margin:0 16px; border-bottom:2px solid #000;">
+    <span>
+        <span class="nama-pengirim" id="replyNama"></span>
+        <span class="teks-pesan" id="replyTeks"></span>
+    </span>
+    <span class="tutup-reply" onclick="batalkanBalas()">&times;</span>
+</div>
+
+<!-- KOLOM KETIK PESAN KAMU TETAP SAMA -->
+<div class="input-bar">
+    <input type="text" id="pesanInput" placeholder="Ketik pesan..." autocomplete="off"
+           onkeypress="if(event.key==='Enter')kirimPesan()">
+    <button class="send-btn" id="kirimBtn" onclick="kirimPesan()">➤</button>
+</div>
 
     <!-- ALERT KUSTOM -->
     <div id="alertOverlay" onclick="tutupAlertDariLuar(event)">
@@ -400,6 +466,13 @@
                 // ==============================================
         // 🔐 VERIFIKASI RECAPTCHA
         // ==============================================
+        let pesanYangDibalas = null;
+
+function batalkanBalas() {
+    pesanYangDibalas = null;
+    document.getElementById('replyPreviewBox').style.display = 'none';
+}
+        
         let sudahVerifikasi = false;
 
         function berhasilVerifikasi() {
@@ -681,6 +754,35 @@
             window.scrollTo(0, document.body.scrollHeight);
         }
 
+                // ==============================================
+        // ↩️ BALAS PESAN — KLIK 2 KALI CEPAT
+        // ==============================================
+        function mulaiBalasPesan(msgElement) {
+            const nama = msgElement.getAttribute('data-nama');
+            const pesan = msgElement.getAttribute('data-pesan');
+            
+            pesanYangDibalas = {
+                nama: nama,
+                pesan: pesan
+            };
+            
+            // Tampilkan preview di atas kolom input
+            document.getElementById('replyNama').textContent = nama + ':';
+            document.getElementById('replyTeks').textContent = pesan + '...';
+            document.getElementById('replyPreviewBox').style.display = 'flex';
+            
+            // Fokus ke kolom ketik
+            document.getElementById('pesanInput').focus();
+        }
+
+        function batalkanBalas() {
+            pesanYangDibalas = null;
+            document.getElementById('replyPreviewBox').style.display = 'none';
+        }
+        
+
+
+        
         // ==============================================
         // 📥 MUAT PESAN
         // ==============================================
@@ -745,26 +847,44 @@
                  .subscribe();
          }
          function tampilkanPesan(pesan) {
-             if (pesanTerakhirId === pesan.id) return;
-             pesanTerakhirId = pesan.id;
-             
-             const chatBox = document.getElementById('chatBox');
-             if (!chatBox) return;
-             
-             const ada = document.querySelector(`[data-msg-id="${pesan.id}"]`);
-             if (ada) return;
-             
-             const tipe = pesan.user_id === userId ? 'own' : 'other';
-             
-             chatBox.insertAdjacentHTML('beforeend', `
-                 <div class="msg-wrapper ${tipe}" data-msg-id="${pesan.id}">
-                     <div class="msg-header">
-                         <span>${escapeHtml(pesan.nama)}</span>
-                         <span>${pesan.waktu}</span>
-                     </div>
-                     <div class="msg-bubble">${escapeHtml(pesan.pesan)}</div>
-                 </div>
-             `);
+    if (pesanTerakhirId === pesan.id) return;
+    pesanTerakhirId = pesan.id;
+    
+    const chatBox = document.getElementById('chatBox');
+    if (!chatBox) return;
+    
+    const ada = document.querySelector(`[data-msg-id="${pesan.id}"]`);
+    if (ada) return;
+    
+    const tipe = pesan.user_id === userId ? 'own' : 'other';
+    
+    // Tampilan pesan yang dibalas (kalau ada)
+    let balasHtml = '';
+    if (pesan.balas_ke) {
+        balasHtml = `
+            <div class="dibalas-dalam-pesan">
+                <strong>${escapeHtml(pesan.balas_ke.nama)}:</strong> ${escapeHtml(pesan.balas_ke.pesan)}
+            </div>
+        `;
+    }
+    
+        chatBox.insertAdjacentHTML('beforeend', `
+        <div class="msg-wrapper ${tipe}" data-msg-id="${pesan.id}" 
+             data-nama="${escapeHtml(pesan.nama)}" 
+             data-pesan="${escapeHtml(pesan.pesan).substring(0, 50)}"
+             ondblclick="mulaiBalasPesan(this)"> <!-- ✅ Klik 2 kali cepat -->
+            
+            <div class="msg-header">
+                <span>${escapeHtml(pesan.nama)}</span>
+                <span>${pesan.waktu}</span>
+            </div>
+            
+            <div class="msg-bubble">
+                ${balasHtml}
+                ${escapeHtml(pesan.pesan)}
+            </div>
+        </div>
+    `);
              
              chatBox.scrollTop = chatBox.scrollHeight;
          }
