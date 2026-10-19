@@ -331,7 +331,7 @@
             justify-content: center;
         }
 
-                /* ============= REPLY CHAT ============= */
+                        /* ============= REPLY CHAT ============= */
         .msg-wrapper {
             position: relative;
         }
@@ -386,6 +386,21 @@
             opacity: 0.8;
             border-radius: 3px;
         }
+
+        /* Tampilan pesan yang dibalas di dalam chat */
+        .dibalas-dalam-pesan {
+            background: rgba(59, 130, 212, 0.1);
+            border-left: 4px solid #3B82D4;
+            padding: 6px 10px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            border-radius: 4px;
+            color: #333;
+        }
+        .dibalas-dalam-pesan strong {
+            color: #3B82D4;
+        }
+
         
     </style>
 </head>
@@ -710,38 +725,51 @@ function batalkanBalas() {
         // 💬 KIRIM PESAN
         // ==============================================
         async function kirimPesan() {
-            if (isSending) return;
-            
-            const input = document.getElementById('pesanInput');
-            const pesan = input.value.trim();
-            
-            if (!pesan) {
-                tampilkanAlert('Tulis pesan dulu!');
-                return;
-            }
-            
-            isSending = true;
-            document.getElementById('kirimBtn').disabled = true;
-            
-            const pesanBaru = {
-                user_id: userId,
-                nama: namaPengguna,
-                pesan: pesan,
-                waktu: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-                tanggal: new Date().toDateString()
-            };
-            
-            try {
-                const { error } = await sb.from('pesan').insert([pesanBaru]);
-                if (error) throw error;
-            } catch (err) {
-                tampilkanAlert('Gagal mengirim pesan!');
-            }
-            
-            input.value = '';
-            isSending = false;
-            document.getElementById('kirimBtn').disabled = false;
+    if (isSending) return;
+    
+    const input = document.getElementById('pesanInput');
+    const pesan = input.value.trim();
+    
+    if (!pesan) {
+        tampilkanAlert('Tulis pesan dulu!');
+        return;
+    }
+    
+    isSending = true;
+    document.getElementById('kirimBtn').disabled = true;
+    
+    const pesanBaru = {
+        user_id: userId,
+        nama: namaPengguna,
+        pesan: pesan,
+        waktu: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+        tanggal: new Date().toDateString(),
+        balas_ke: pesanYangDibalas // ✅ Data pesan yang dibalas ikut dikirim
+    };
+    
+    try {
+        console.log('📤 Mengirim pesan...', pesanBaru);
+        
+        const { data, error } = await sb.from('pesan').insert([pesanBaru]);
+        
+        if (error) {
+            console.error('❌ Error dari Supabase:', error);
+            throw new Error(error.message || 'Gagal kirim pesan');
         }
+        
+        console.log('✅ Pesan terkirim!', data);
+        input.value = '';
+        batalkanBalas(); // Hapus preview reply setelah kirim
+        
+    } catch (err) {
+        console.error('❌ Error:', err);
+        tampilkanAlert('Gagal: ' + err.message);
+    }
+    
+    isSending = false;
+    document.getElementById('kirimBtn').disabled = false;
+}
+
 
         // ==============================================
         // 🔄 REFRESH MANUAL
@@ -858,21 +886,27 @@ function batalkanBalas() {
     
     const tipe = pesan.user_id === userId ? 'own' : 'other';
     
-    // Tampilan pesan yang dibalas (kalau ada)
+    // ✅ Tampilan pesan yang dibalas
     let balasHtml = '';
     if (pesan.balas_ke) {
+        // Kalau balas_ke berupa string JSON, ubah jadi objek dulu
+        let balasData = pesan.balas_ke;
+        if (typeof balasData === 'string') {
+            try { balasData = JSON.parse(balasData); } catch(e) {}
+        }
+        
         balasHtml = `
             <div class="dibalas-dalam-pesan">
-                <strong>${escapeHtml(pesan.balas_ke.nama)}:</strong> ${escapeHtml(pesan.balas_ke.pesan)}
+                ↩️ <strong>${escapeHtml(balasData.nama)}:</strong> ${escapeHtml(balasData.pesan)}
             </div>
         `;
     }
     
-        chatBox.insertAdjacentHTML('beforeend', `
-        <div class="msg-wrapper ${tipe}" data-msg-id="${pesan.id}" 
-             data-nama="${escapeHtml(pesan.nama)}" 
+    chatBox.insertAdjacentHTML('beforeend', `
+        <div class="msg-wrapper ${tipe}" data-msg-id="${pesan.id}"
+             data-nama="${escapeHtml(pesan.nama)}"
              data-pesan="${escapeHtml(pesan.pesan).substring(0, 50)}"
-             ondblclick="mulaiBalasPesan(this)"> <!-- ✅ Klik 2 kali cepat -->
+             ondblclick="mulaiBalasPesan(this)">
             
             <div class="msg-header">
                 <span>${escapeHtml(pesan.nama)}</span>
@@ -885,9 +919,10 @@ function batalkanBalas() {
             </div>
         </div>
     `);
-             
-             chatBox.scrollTop = chatBox.scrollHeight;
-         }
+    
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
          function escapeHtml(t) {
              if (!t) return '';
              const div = document.createElement('div');
