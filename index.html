@@ -453,7 +453,10 @@
             <div id="chatBox"></div>
         </div>
 
-             <!-- KOTAK PREVIEW PESAN YANG DIBALAS -->
+             
+<!-- KOLOM KETIK PESAN KAMU TETAP SAMA -->
+<div class="input-bar">
+    <!-- KOTAK PREVIEW PESAN YANG DIBALAS -->
 <div id="replyPreviewBox" class="reply-preview" style="display:none; margin:0 16px; border-bottom:2px solid #000;">
     <span>
         <span class="nama-pengirim" id="replyNama"></span>
@@ -461,9 +464,7 @@
     </span>
     <span class="tutup-reply" onclick="batalkanBalas()">&times;</span>
 </div>
-
-<!-- KOLOM KETIK PESAN KAMU TETAP SAMA -->
-<div class="input-bar">
+    
     <input type="text" id="pesanInput" placeholder="Ketik pesan..." autocomplete="off"
            onkeypress="if(event.key==='Enter')kirimPesan()">
     <button class="send-btn" id="kirimBtn" onclick="kirimPesan()">➤</button>
