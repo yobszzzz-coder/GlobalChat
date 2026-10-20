@@ -939,6 +939,33 @@ function batalkanBalas() {
                  if (langgananPesan) langgananPesan.unsubscribe();
              }
          });
+
+        // ==============================================
+// ✅ OTOMATIS KELUAR SAAT MENUTUP WEB
+// ==============================================
+window.addEventListener('beforeunload', async function() {
+    if (userId) {
+        try {
+            await sb.from('online_users')
+                .delete()
+                .eq('user_id', userId);
+        } catch (e) {
+            console.log('Tidak perlu hapus, sudah terhapus');
+        }
+    }
+});
+
+// Juga saat kehilangan koneksi/halaman tidak terlihat
+document.addEventListener('visibilitychange', async function() {
+    if (document.visibilityState === 'hidden' && userId) {
+        try {
+            await sb.from('online_users')
+                .delete()
+                .eq('user_id', userId);
+        } catch (e) {}
+    }
+});
+        
      </script>
  </body>
  </html>
