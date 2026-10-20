@@ -401,6 +401,18 @@
             color: #3B82D4;
         }
 
+
+        .role-admin {
+    display: inline-block;
+    padding: 2px 6px;
+    margin-right: 5px;
+    color: #fff;
+    background: #e00000;
+    border: 1px solid #8b0000;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 800;
+        }
         
     </style>
 </head>
@@ -811,6 +823,19 @@ function batalkanBalas() {
         
 
 
+
+        //Title Admin 
+        const NAMA_ADMIN = ['yobel', 'namaadminlain'];
+
+function buatNamaDenganBadge(namaAsli) {
+    const nama = String(namaAsli || 'Anonim').trim();
+    const admin = NAMA_ADMIN.some(
+        item => item.toLowerCase() === nama.toLowerCase()
+    );
+
+    return `${admin ? '<span class="role-admin">[ ADMIN ]</span> ' : ''}${escapeHtml(nama)}`;
+}
+        
         
         // ==============================================
         // 📥 MUAT PESAN
@@ -910,7 +935,13 @@ function batalkanBalas() {
              ondblclick="mulaiBalasPesan(this)">
             
             <div class="msg-header">
-                <span>${escapeHtml(pesan.nama)}</span>
+                <span>
+  ${String(pesan.nama || '').trim().toLowerCase() === 'yobel'
+    ? '<span class="role-admin">[ ADMIN ]</span> '
+    : ''}
+  ${escapeHtml(pesan.nama || 'Anonim')}
+</span>
+
                 <span>${pesan.waktu}</span>
             </div>
             
