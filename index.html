@@ -6,7 +6,6 @@
     <title>Global Chat</title>
         <!-- Script Google reCAPTCHA -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @font-face {
@@ -301,12 +300,6 @@
             margin-bottom: 20px;
             font-size: 14px;
         }
-
-        #chatBox {
-    scroll-behavior: smooth;
-        }
-        
-
                 /* ============= LAYAR RECAPTCHA ============= */
         #captchaScreen {
             position: fixed;
@@ -331,7 +324,8 @@
             justify-content: center;
         }
 
-                        /* ============= REPLY CHAT ============= */
+        /* ============= REPLY CHAT ============= */
+
         .msg-wrapper {
             position: relative;
         }
@@ -388,21 +382,50 @@
         }
 
         /* Tampilan pesan yang dibalas di dalam chat */
-        .dibalas-dalam-pesan {
-            background: rgba(59, 130, 212, 0.1);
-            border-left: 4px solid #3B82D4;
-            padding: 6px 10px;
-            margin-bottom: 8px;
-            font-size: 13px;
-            border-radius: 4px;
-            color: #333;
+      .dibalas-dalam-pesan {
+    background: rgba(59, 130, 212, 0.1);
+    border-left: 4px solid #3B82D4;
+    padding: 6px 10px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    border-radius: 4px;
+    color: #333;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+.dibalas-dalam-pesan strong {
+    color: #3B82D4;
+}
+
+        
+        
+                /* Menu opsi pesan */
+        .pesan-opsi-menu {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border: 3px solid black;
+            box-shadow: 4px 4px 0 black;
+            border-radius: 6px;
+            padding: 8px 12px;
+            z-index: 30;
+            display: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            color: #DC2626;
         }
-        .dibalas-dalam-pesan strong {
-            color: #3B82D4;
+        .pesan-opsi-menu.aktif {
+            display: block;
+        }
+        .msg-wrapper {
+            position: relative;
         }
 
-
-        .role-admin {
+.role-admin {
     display: inline-block;
     padding: 2px 6px;
     margin-right: 5px;
@@ -412,19 +435,370 @@
     border-radius: 4px;
     font-size: 11px;
     font-weight: 800;
-        }
+}
 
-        /* Izinkan seleksi teks hanya pada pesan chat */
+
+
+/* ===== LIQUID GLASS PUTIH 3D ===== */
+
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-bg-strong: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.88);
+  --glass-border-soft: rgba(255, 255, 255, 0.72);
+  --glass-shadow: 0 18px 45px rgba(50, 60, 80, 0.18);
+  --glass-shadow-soft: 0 10px 30px rgba(50, 60, 80, 0.12);
+  --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.95);
+  --glass-deep: inset 0 -1px 1px rgba(0, 0, 0, 0.08);
+}
+
+body {
+  color: #25232a;
+  background:
+    radial-gradient(ellipse at 15% 10%, rgba(255, 255, 255, 0.95), transparent 42%),
+    radial-gradient(ellipse at 85% 25%, rgba(225, 231, 240, 0.85), transparent 45%),
+    radial-gradient(ellipse at 50% 90%, rgba(210, 220, 235, 0.75), transparent 48%),
+    linear-gradient(145deg, #e9edf3, #f8f9fc 50%, #e5e9f0);
+  background-attachment: fixed;
+}
+
+#nameScreen {
+  background: rgba(245, 247, 251, 0.35);
+  backdrop-filter: blur(26px) saturate(145%);
+  -webkit-backdrop-filter: blur(26px) saturate(145%);
+}
+
+/* ===== SEMUA BOX KARDU ===== */
+
+.name-card,
+.alert-card,
+.msg-bubble,
+.input-bar,
+.header,
+.pesan-opsi-menu,
+.system-message,
+.msg-wrapper .msg-bubble {
+  border-radius: 22px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    var(--glass-highlight),
+    var(--glass-deep),
+    var(--glass-shadow);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+}
+
+.name-card:hover,
+.alert-card:hover,
+.msg-bubble:hover,
+.pesan-opsi-menu:hover {
+  background: var(--glass-bg-strong);
+  box-shadow:
+    var(--glass-highlight),
+    var(--glass-deep),
+    0 22px 55px rgba(50, 60, 80, 0.22);
+}
+
+/* ===== KARTU NAMA ===== */
+
+.name-card,
+.alert-card {
+  color: #25232a;
+  padding: 18px;
+}
+
+.name-card p,
+.alert-card p {
+  color: #55545c;
+}
+
+/* ===== INPUT ===== */
+
+.name-card input,
+.input-bar input {
+  color: #25232a;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--glass-border-soft);
+  border-radius: 14px;
+  box-shadow: inset 0 1px 5px rgba(255, 255, 255, 0.9);
+}
+
+.name-card input::placeholder,
+.input-bar input::placeholder {
+  color: #85858d;
+}
+
+/* ===== TOMBOL ===== */
+
+.btn-yellow,
+.send-btn,
+.refresh-btn {
+  color: #fff;
+  background: linear-gradient(135deg, rgba(120, 130, 145, 0.95), rgba(85, 95, 110, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 16px;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.45),
+    0 8px 22px rgba(40, 45, 55, 0.18);
+  transform: translateY(0);
+  transition: 0.22s ease;
+}
+
+.btn-yellow:hover,
+.send-btn:hover,
+.refresh-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.55),
+    0 12px 30px rgba(40, 45, 55, 0.25);
+}
+
+.btn-yellow:active,
+.send-btn:active,
+.refresh-btn:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.12),
+    0 6px 16px rgba(40, 45, 55, 0.15);
+}
+
+/* ===== HEADER ===== */
+
+.header {
+  color: #25232a;
+  background: rgba(255, 255, 255, 0.42);
+  border-bottom: 1px solid var(--glass-border-soft);
+  border-radius: 0 0 22px 22px;
+  backdrop-filter: blur(22px) saturate(145%);
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
+}
+
+/* ===== AREA CHAT ===== */
+
+#chatPage {
+  color: #25232a;
+  background:
+    radial-gradient(ellipse at 10% 15%, rgba(255, 255, 255, 0.35), transparent 45%),
+    radial-gradient(ellipse at 90% 70%, rgba(215, 221, 232, 0.3), transparent 45%);
+}
+
+.chat-container {
+  background: transparent;
+}
+
+/* ===== BUBBLE PESAN ===== */
+
+.msg-bubble {
+  color: #292831;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.92),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.08),
+    0 12px 30px rgba(60, 65, 80, 0.12);
+  backdrop-filter: blur(20px) saturate(145%);
+  -webkit-backdrop-filter: blur(20px) saturate(145%);
+}
+
+.msg-wrapper.own .msg-bubble {
+  background: rgba(225, 230, 238, 0.7);
+  border-color: rgba(255, 255, 255, 0.85);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.06),
+    0 12px 30px rgba(60, 65, 80, 0.14);
+}
+
+.msg-header {
+  color: #666873;
+}
+
+.msg-bubble a,
+.dibalas-dalam-pesan strong {
+  color: #ff9fc5;
+}
+
+/* ===== PESAN SISTEM ===== */
+
+.msg-system {
+  color: #4f515a;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 20px;
+  padding: 12px 16px;
+  text-align: center;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.08),
+    0 14px 35px rgba(50, 60, 80, 0.12);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+}
+
+.msg-system strong {
+  color: #25232a;
+  font-weight: 600;
+}
+
+/* ===== INPUT BAWAH ===== */
+
+.input-bar {
+  background: rgba(255, 255, 255, 0.5);
+  border-top: 1px solid var(--glass-border-soft);
+  border-radius: 22px 22px 0 0;
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+}
+
+/* ===== OVERLAY ===== */
+
+#alertOverlay,
+#captchaScreen {
+  background: rgba(45, 48, 55, 0.28);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ===== MENU OPSI PESAN ===== */
+
+.pesan-opsi-menu {
+  color: #292831;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    0 12px 35px rgba(40, 45, 55, 0.18);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ===== STATUS ===== */
+
+.status-online {
+  color: #27966f;
+}
+
+.status-offline {
+  color: #888b94;
+}
+
+/* ===== BADGE ADMIN ===== */
+
+.role-admin {
+  color: #fff;
+  background: #e00000;
+  border: 1px solid #ff7a8a;
+  box-shadow: 0 0 10px rgba(255, 0, 45, 0.45);
+}
+
+#bgVideo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+
+#bgVideo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+}
+
+body {
+  color: #25232a;
+  background: transparent;
+  z-index: 0;
+}
+
+#bgVideo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 15% 10%, rgba(255, 255, 255, 0.7), transparent 38%),
+    radial-gradient(ellipse at 85% 25%, rgba(225, 231, 240, 0.6), transparent 40%),
+    linear-gradient(145deg, rgba(233, 237, 243, 0.5), rgba(248, 249, 252, 0.5), rgba(229, 233, 240, 0.5));
+  z-index: 1;
+}
+
+/* Teks header putih */
+.header,
+.header .header-title,
+.header .status-row,
+.header .status-row span,
+.header .status-row span:not(#serverStatus) {
+  color: #fff !important;
+}
+
+/* Pertahankan warna khusus status */
+#serverStatus.status-online {
+  color: #32c48d !important;
+}
+
+#serverStatus.status-offline {
+  color: #ff7373 !important;
+}
+
+/* Box header video rasio 16:9 */
+.header {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Isi header tetap berada di dalam box */
+.header .header-top,
+.header .status-row {
+  position: relative;
+  z-index: 1;
+}
+
+
+
+.header {
+  position: relative;
+  padding-top: 62px !important;
+}
+
+.header-credit {
+  position: absolute;
+  top: 12px;
+  left: 200px;
+  z-index: 5;
+
+  color: #e00000;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* Izinkan seleksi teks hanya pada pesan chat */
 #chatBox,
 #chatBox * {
   -webkit-user-select: text !important;
   user-select: text !important;
   -webkit-touch-callout: default;
 }
-        
+
+
+
     </style>
 </head>
 <body>
+
+
 
     <!-- LAYAR VERIFIKASI RECAPTCHA -->
     <div id="captchaScreen">
@@ -442,7 +816,20 @@
             <p id="statusVerifikasi" style="margin-top:15px; font-size:13px; color:#666">Belum diverifikasi</p>
         </div>
     </div>
-    
+
+<!-- KONFIRMASI HAPUS -->
+<div id="confirmOverlay" onclick="tutupKonfirmasi(event)" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; justify-content:center; align-items:center;">
+    <div style="background:#fff; border:4px solid #000; box-shadow:6px 6px 0 #000; padding:24px; max-width:320px; text-align:center; font-family:inherit;">
+        <h3 style="margin:0 0 12px 0; font-size:18px;">⚠️ KONFIRMASI HAPUS</h3>
+        <p style="margin:0 0 20px 0; font-size:14px;">Yakin ingin menghapus pesan ini?<br>Tindakan ini tidak bisa dibatalkan!</p>
+        <div style="display:flex; gap:12px; justify-content:center;">
+            <button onclick="tutupKonfirmasi()" style="padding:8px 20px; border:3px solid #000; background:#eee; font-weight:bold; cursor:pointer; box-shadow:3px 3px 0 #000;">BATAL</button>
+            <button id="btnKonfirmasiHapus" style="padding:8px 20px; border:3px solid #000; background:#EF4444; color:#fff; font-weight:bold; cursor:pointer; box-shadow:3px 3px 0 #000;">HAPUS</button>
+        </div>
+    </div>
+</div>
+
+
     <!-- LAYAR MASUK NAMA -->
     <div id="nameScreen">
         <div class="name-card">
@@ -453,10 +840,18 @@
         </div>
     </div>
 
+
+
+
     <!-- HALAMAN CHAT -->
     <div id="chatPage">
         <div class="header">
+<span class="header-credit">BY YOBEL</span>
             <div class="header-top">
+                <video id="bgVideo" autoplay muted loop playsinline>
+  <source src="/fixio_tiktok_hd_1792665822291.mp4" type="video/mp4">
+</video>
+             
                 <span class="header-title">🌐 GLOBAL CHAT</span>
                 <button class="refresh-btn" onclick="refreshChat()">↻</button>
             </div>
@@ -473,22 +868,22 @@
             <div id="chatBox"></div>
         </div>
 
-             
+
+
 <!-- KOLOM KETIK PESAN KAMU TETAP SAMA -->
 <div class="input-bar">
-    <!-- KOTAK PREVIEW PESAN YANG DIBALAS -->
-<div id="replyPreviewBox" class="reply-preview" style="display:none; margin:0 16px; border-bottom:2px solid #000;">
-    <span>
-        <span class="nama-pengirim" id="replyNama"></span>
-        <span class="teks-pesan" id="replyTeks"></span>
-    </span>
-    <span class="tutup-reply" onclick="batalkanBalas()">&times;</span>
+         <!-- KOTAK PREVIEW PESAN YANG DIBALAS -->
+<div id="replyPreviewBox" class="reply-preview" style="display: none;">
+  <span class="nama-pengirim" id="replyNama"></span>
+  <span class="teks-pesan" id="replyTeks"></span>
+  <span class="tutup-reply" onclick="batalkanBalas()">&times;</span>
 </div>
-    
+
     <input type="text" id="pesanInput" placeholder="Ketik pesan..." autocomplete="off"
            onkeypress="if(event.key==='Enter')kirimPesan()">
     <button class="send-btn" id="kirimBtn" onclick="kirimPesan()">➤</button>
 </div>
+
 
     <!-- ALERT KUSTOM -->
     <div id="alertOverlay" onclick="tutupAlertDariLuar(event)">
@@ -498,17 +893,44 @@
             <button class="btn-yellow" onclick="tutupAlert()">OK</button>
         </div>
     </div>
+
     <script>
-                // ==============================================
+
+
+        // ==============================================
+        // ⚙️ KONFIGURASI — GANTI DENGAN MILIKMU
+        // ==============================================
+        const SUPABASE_URL = 'https://izsrzxlnkcjzzvxetctd.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6c3J6eGxua2Nqenp2eGV0Y3RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzNjk0ODUsImV4cCI6MjEwNzk0NTQ4NX0.YAYFkVKNOr0e6-ZxoU4uPidKGXk7vKU_xeXpfOvkrZA';
+
+        const { createClient } = supabase;
+        const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let namaPengguna = localStorage.getItem('gc_nama');
+        let userId = localStorage.getItem('gc_user_id');
+        let isSending = false;
+        let pesanTerakhirId = null;
+        let langgananPesan = null;
+        let hariTerakhir = localStorage.getItem('gc_hari_terakhir');
+
+        if (!userId) {
+            userId = 'u_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
+            localStorage.setItem('gc_user_id', userId);
+        }
+
+            // ==============================================
         // 🔐 VERIFIKASI RECAPTCHA
         // ==============================================
-        let pesanYangDibalas = null;
+        
+let pesanYangDibalas = null;
 
 function batalkanBalas() {
     pesanYangDibalas = null;
     document.getElementById('replyPreviewBox').style.display = 'none';
 }
-        
+
+
+
         let sudahVerifikasi = false;
 
         function berhasilVerifikasi() {
@@ -547,27 +969,6 @@ function batalkanBalas() {
             document.getElementById('nameScreen').classList.add('hidden');
             document.getElementById('chatPage').classList.add('show');
             masukKeChat();
-                }
-        
-        // ==============================================
-        // ⚙️ KONFIGURASI — GANTI DENGAN MILIKMU
-        // ==============================================
-        const SUPABASE_URL = 'https://izsrzxlnkcjzzvxetctd.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6c3J6eGxua2Nqenp2eGV0Y3RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzNjk0ODUsImV4cCI6MjEwNzk0NTQ4NX0.YAYFkVKNOr0e6-ZxoU4uPidKGXk7vKU_xeXpfOvkrZA';
-
-        const { createClient } = supabase;
-        const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        let namaPengguna = localStorage.getItem('gc_nama');
-        let userId = localStorage.getItem('gc_user_id');
-        let isSending = false;
-        let pesanTerakhirId = null;
-        let langgananPesan = null;
-        let hariTerakhir = localStorage.getItem('gc_hari_terakhir');
-
-        if (!userId) {
-            userId = 'u_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
-            localStorage.setItem('gc_user_id', userId);
         }
 
         // ==============================================
@@ -641,6 +1042,18 @@ function batalkanBalas() {
             }
             // Kalau belum verifikasi → tetap di layar captcha
         });
+
+//nama khusus [ ADMIN]
+const NAMA_ADMIN = ['yobel', 'namaadminlain'];
+
+function buatNamaDenganBadge(namaAsli) {
+    const nama = String(namaAsli || 'Anonim').trim();
+    const admin = NAMA_ADMIN.some(
+        item => item.toLowerCase() === nama.toLowerCase()
+    );
+
+    return `${admin ? '<span class="role-admin">[ ADMIN ]</span> ' : ''}${escapeHtml(nama)}`;
+}
 
 
         // ==============================================
@@ -792,6 +1205,8 @@ function batalkanBalas() {
 }
 
 
+
+
         // ==============================================
         // 🔄 REFRESH MANUAL
         // ==============================================
@@ -803,7 +1218,8 @@ function batalkanBalas() {
             window.scrollTo(0, document.body.scrollHeight);
         }
 
-                // ==============================================
+
+        // ==============================================
         // ↩️ BALAS PESAN — KLIK 2 KALI CEPAT
         // ==============================================
         function mulaiBalasPesan(msgElement) {
@@ -828,71 +1244,42 @@ function batalkanBalas() {
             pesanYangDibalas = null;
             document.getElementById('replyPreviewBox').style.display = 'none';
         }
-        
 
 
-
-        //Title Admin 
-        const NAMA_ADMIN = ['yobel', 'namaadminlain'];
-
-function buatNamaDenganBadge(namaAsli) {
-    const nama = String(namaAsli || 'Anonim').trim();
-    const admin = NAMA_ADMIN.some(
-        item => item.toLowerCase() === nama.toLowerCase()
-    );
-
-    return `${admin ? '<span class="role-admin">[ ADMIN ]</span> ' : ''}${escapeHtml(nama)}`;
-}
-        
-        
         // ==============================================
         // 📥 MUAT PESAN
         // ==============================================
         async function muatPesanLama() {
-    try {
-        const hariIni = new Date().toDateString();
-        const { data, error } = await sb
-            .from('pesan')
-            .select('*')
-            .eq('tanggal', hariIni)
-            .order('created_at', { ascending: true });
-        
-        if (error) throw error;
-        
-        const chatBox = document.getElementById('chatBox');
-        if (!chatBox) return;
-
-        // ✅ Simpan posisi scroll sekarang
-        const posisiScroll = chatBox.scrollTop;
-        const tinggiBox = chatBox.scrollHeight;
-        const diBawah = (posisiScroll + chatBox.clientHeight) >= tinggiBox - 50;
-
-        // ✅ Hanya tambah pesan BARU, jangan hapus yang lama
-        const pesanYangAda = new Set();
-        chatBox.querySelectorAll('[data-msg-id]').forEach(el => {
-            pesanYangAda.add(el.getAttribute('data-msg-id'));
-        });
-
-        data.forEach(pesan => {
-            if (!pesanYangAda.has(pesan.id)) {
-                tampilkanPesan(pesan);
-            }
-        });
-
-        // ✅ Kalau user ada di paling bawah → tetap di bawah
-        if (diBawah) {
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-        // Kalau user sedang baca di atas → jangan pindahkan posisinya
-
-        // Update total chat
-        document.getElementById('totalChat').textContent = data.length;
-
-    } catch (err) {
-        console.error('Error muat pesan:', err);
-    }
-}
-
+             try {
+                 const hariIni = new Date().toDateString();
+                 const { data, error } = await sb
+                     .from('pesan')
+                     .select('*')
+                     .eq('tanggal', hariIni)
+                     .order('created_at', { ascending: true });
+                 
+                 if (error) throw error;
+                 
+                 const chatBox = document.getElementById('chatBox');
+                 if (!chatBox) return;
+                 
+                 // Simpan pesan sistem
+                 const sistem = chatBox.querySelector('.msg-system');
+                 chatBox.innerHTML = '';
+                 if (sistem) chatBox.appendChild(sistem);
+                 
+                 data.forEach(p => tampilkanPesan(p));
+                 
+                 // Update total chat
+                 const total = data.length;
+                 document.getElementById('totalChat').textContent = total;
+                 
+                 // Auto scroll ke bawah
+                 chatBox.scrollTop = chatBox.scrollHeight;
+             } catch (err) {
+                 console.error('Error muat:', err);
+             }
+         }
          function mulaiDengarkanPesan() {
              if (langgananPesan) langgananPesan.unsubscribe();
              
@@ -936,14 +1323,22 @@ function buatNamaDenganBadge(namaAsli) {
         `;
     }
     
-    chatBox.insertAdjacentHTML('beforeend', `
+        chatBox.insertAdjacentHTML('beforeend', `
         <div class="msg-wrapper ${tipe}" data-msg-id="${pesan.id}"
              data-nama="${escapeHtml(pesan.nama)}"
              data-pesan="${escapeHtml(pesan.pesan).substring(0, 50)}"
-             ondblclick="mulaiBalasPesan(this)">
+             ondblclick="mulaiBalasPesan(this)"
+             oncontextmenu="tahanPesan(event, this)">
+            
+            <!-- Menu Hapus — HANYA muncul di pesan milik sendiri -->
+            ${tipe === 'own' ? `
+            <div class="pesan-opsi-menu" id="opsi-${pesan.id}" onclick="konfirmasiHapus('${pesan.id}')">
+                🗑️ Hapus Pesan
+            </div>
+            ` : ''}
             
             <div class="msg-header">
-                <span>
+<span>
   ${String(pesan.nama || '').trim().toLowerCase() === 'yobel'
     ? '<span class="role-admin">[ ADMIN ]</span> '
     : ''}
@@ -959,9 +1354,98 @@ function buatNamaDenganBadge(namaAsli) {
             </div>
         </div>
     `);
+
     
     chatBox.scrollTop = chatBox.scrollHeight;
 }
+
+        // ==============================================
+        // 🗑️ FITUR HAPUS PESAN SENDIRI
+        // ==============================================
+        
+        // Tutup semua menu opsi saat klik di tempat lain
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.pesan-opsi-menu').forEach(m => m.classList.remove('aktif'));
+        });
+
+        // Tahan lama / klik kanan untuk munculkan menu
+        function tahanPesan(event, elemen) {
+            event.preventDefault();
+            const msgId = elemen.getAttribute('data-msg-id');
+            const menu = document.getElementById(`opsi-${msgId}`);
+            
+            // Tutup semua menu lain dulu
+            document.querySelectorAll('.pesan-opsi-menu').forEach(m => m.classList.remove('aktif'));
+            
+            // Hanya tampilkan menu kalau ini pesan milik sendiri
+            if (menu) {
+                menu.classList.add('aktif');
+            }
+            // Kalau pesan orang lain → tidak muncul apa-apa
+        }
+
+        // Konfirmasi sebelum hapus
+        let pesanYangAkanDihapus = null;
+
+function konfirmasiHapus(msgId) {
+    tutupSemuaMenu();
+    pesanYangAkanDihapus = msgId;
+    
+    const overlay = document.getElementById('confirmOverlay');
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+}
+
+function tutupKonfirmasi(event) {
+    // Tutup kalau klik di luar kotak atau tombol BATAL
+    if (!event || event.target.id === 'confirmOverlay') {
+        document.getElementById('confirmOverlay').style.display = 'none';
+        pesanYangAkanDihapus = null;
+    }
+}
+
+// Tambahkan event listener saat halaman dimuat
+document.addEventListener('DOMContentLoaded', function() {
+    const btnHapus = document.getElementById('btnKonfirmasiHapus');
+    if (btnHapus) {
+        btnHapus.onclick = function() {
+            if (pesanYangAkanDihapus) {
+                hapusPesan(pesanYangAkanDihapus);
+            }
+            document.getElementById('confirmOverlay').style.display = 'none';
+            pesanYangAkanDihapus = null;
+        };
+    }
+});
+
+
+        function tutupSemuaMenu() {
+            document.querySelectorAll('.pesan-opsi-menu').forEach(m => m.classList.remove('aktif'));
+        }
+
+        // Kirim perintah hapus ke database
+        async function hapusPesan(msgId) {
+            try {
+                const { error } = await sb.from('pesan').delete().eq('id', msgId);
+                
+                if (error) throw error;
+                
+                // Hapus elemen dari layar
+                const pesanElemen = document.querySelector(`[data-msg-id="${msgId}"]`);
+                if (pesanElemen) {
+                    pesanElemen.style.opacity = '0';
+                    pesanElemen.style.transition = 'opacity 0.3s ease';
+                    setTimeout(() => pesanElemen.remove(), 300);
+                }
+                
+                console.log('✅ Pesan berhasil dihapus');
+            } catch (err) {
+                console.error('❌ Gagal hapus:', err);
+                tampilkanAlert('Gagal menghapus pesan!');
+            }
+        }
+
 
          function escapeHtml(t) {
              if (!t) return '';
@@ -978,8 +1462,8 @@ function buatNamaDenganBadge(namaAsli) {
                  if (langgananPesan) langgananPesan.unsubscribe();
              }
          });
-
-        // ==============================================
+         
+// ==============================================
 // ✅ OTOMATIS KELUAR SAAT MENUTUP WEB
 // ==============================================
 window.addEventListener('beforeunload', async function() {
@@ -1004,7 +1488,7 @@ document.addEventListener('visibilitychange', async function() {
         } catch (e) {}
     }
 });
-        
+
      </script>
  </body>
  </html>
