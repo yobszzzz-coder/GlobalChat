@@ -413,6 +413,14 @@
     font-size: 11px;
     font-weight: 800;
         }
+
+        /* Izinkan seleksi teks hanya pada pesan chat */
+#chatBox,
+#chatBox * {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  -webkit-touch-callout: default;
+}
         
     </style>
 </head>
