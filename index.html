@@ -1249,37 +1249,49 @@ function buatNamaDenganBadge(namaAsli) {
         // ==============================================
         // 📥 MUAT PESAN
         // ==============================================
-        async function muatPesanLama() {
-             try {
-                 const hariIni = new Date().toDateString();
-                 const { data, error } = await sb
-                     .from('pesan')
-                     .select('*')
-                     .eq('tanggal', hariIni)
-                     .order('created_at', { ascending: true });
-                 
-                 if (error) throw error;
-                 
-                 const chatBox = document.getElementById('chatBox');
-                 if (!chatBox) return;
-                 
-                 // Simpan pesan sistem
-                 const sistem = chatBox.querySelector('.msg-system');
-                 chatBox.innerHTML = '';
-                 if (sistem) chatBox.appendChild(sistem);
-                 
-                 data.forEach(p => tampilkanPesan(p));
-                 
-                 // Update total chat
-                 const total = data.length;
-                 document.getElementById('totalChat').textContent = total;
-                 
-                 // Auto scroll ke bawah
-                 chatBox.scrollTop = chatBox.scrollHeight;
-             } catch (err) {
-                 console.error('Error muat:', err);
-             }
-         }
+async function muatPesanLama(forceScrollKeBawah = false) {
+  const { data: pesan, error } = await sb
+    .from('pesan')
+    .select('*')
+    .order('created_at', { ascending: true });
+
+  if (error) return;
+
+  const chatBox = document.getElementById('chatBox');
+
+  // === HAPUS baris yang mengosongkan chatBox di sini ===
+  // JANGAN pakai: chatBox.innerHTML = '';  <-- ini penyebab lompat!
+
+  // Cari pesan yang belum ditampilkan saja
+  const indexMulai = pesanTerakhirId
+    ? pesan.findIndex(p => p.id === pesanTerakhirId) + 1
+    : 0;
+
+  const pesanBaru = pesan.slice(indexMulai);
+
+  if (pesanBaru.length === 0) return; // Tidak ada pesan baru → selesai
+
+  // Tampilkan hanya pesan yang baru
+  pesanBaru.forEach(p => tampilkanPesan(p));
+  pesanTerakhirId = pesan[pesan.length - 1]?.id;
+
+  // Scroll hanya jika perlu
+  if (forceScrollKeBawah) {
+    scrollKeBawah();
+  } else {
+    const sudahDiBawah = chatBox.scrollTop + chatBox.clientHeight >= chatBox.scrollHeight - 100;
+    if (sudahDiBawah) scrollKeBawah();
+  }
+}
+
+function scrollKeBawah() {
+  const chatBox = document.getElementById('chatBox');
+  chatBox.scrollTo({
+    top: chatBox.scrollHeight,
+    behavior: 'smooth'
+  });
+}
+
          function mulaiDengarkanPesan() {
              if (langgananPesan) langgananPesan.unsubscribe();
              
