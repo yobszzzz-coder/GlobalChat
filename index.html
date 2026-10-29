@@ -3,127 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Chat</title>
-        <!-- Script Google reCAPTCHA -->
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <title>PUBLIC CHAT</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
-        @font-face {
-            font-family: 'Robot Reavers';
-            src: url('Robot-Reavers.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Robot Reavers', sans-serif;
-            -webkit-user-select: none;
-            user-select: none;
+            font-family: 'Arial Black', 'Helvetica Bold', sans-serif;
             -webkit-tap-highlight-color: transparent;
-        }
-
-        :root {
-            --biru: #3B82D4;
-            --kuning: #FCD300;
-            --hitam: #000000;
-            --putih: #FFFFFF;
+            user-select: none;
         }
 
         body {
-            background: #F8F5EB;
-            background-image: radial-gradient(#D4CDB8 1px, transparent 1px);
-            background-size: 20px 20px;
+            background-color: #fef9c3;
+            background-image: radial-gradient(#00000015 2px, transparent 2px);
+            background-size: 24px 24px;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* ============= LAYAR NAMA ============= */
-        #nameScreen {
+        :root {
+            --biru: #3b82f6;
+            --kuning: #facc15;
+            --hitam: #000000;
+            --putih: #ffffff;
+            --abu: #e5e5e5;
+        }
+
+        /* ============== MODAL NAMA ============== */
+        .modal-nama {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #F8F5EB;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
             display: flex;
-            justify-content: center;
             align-items: center;
-            z-index: 100;
-            padding: 20px;
+            justify-content: center;
+            z-index: 1000;
         }
 
-        #nameScreen.hidden {
-            display: none !important;
-        }
-
-        .name-card {
+        .kotak-nama {
             background: var(--putih);
-            border: 4px solid var(--hitam);
-            box-shadow: 6px 6px 0 var(--hitam);
-            padding: 40px 30px;
-            max-width: 420px;
-            width: 100%;
+            border: 5px solid var(--hitam);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.4);
+        }
+
+        .kotak-nama h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
             text-align: center;
         }
 
-        .name-card h2 {
-            font-size: 26px;
-            margin-bottom: 10px;
-        }
-
-        .name-card p {
-            font-size: 14px;
-            margin-bottom: 25px;
-            color: #444;
-        }
-
-        .name-card input {
+        .kotak-nama input {
             width: 100%;
             padding: 14px;
-            font-size: 16px;
-            border: 3px solid var(--hitam);
+            font-size: 18px;
+            border: 4px solid var(--hitam);
+            border-radius: 8px;
+            margin-bottom: 16px;
             outline: none;
-            margin-bottom: 20px;
-            background: var(--putih);
+            user-select: text;
         }
 
-        .btn-yellow {
-            background: var(--kuning);
-            border: 3px solid var(--hitam);
-            box-shadow: 4px 4px 0 var(--hitam);
-            padding: 12px 30px;
-            font-size: 16px;
+        .kotak-nama button {
+            width: 100%;
+            padding: 14px;
+            background: var(--biru);
+            color: var(--putih);
+            border: 4px solid var(--hitam);
+            border-radius: 8px;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.4);
             transition: transform 0.1s, box-shadow 0.1s;
         }
 
-        .btn-yellow:active {
-            transform: translate(3px, 3px);
-            box-shadow: 1px 1px 0 var(--hitam);
+        .kotak-nama button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.4);
         }
 
-        /* ============= HEADER ============= */
-        #chatPage {
-            display: none;
-            padding-bottom: 90px;
-        }
-
-        #chatPage.show {
-            display: block;
+        /* ============== HEADER ============== */
+        .header-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--kuning);
+            border-bottom: 5px solid var(--hitam);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2);
         }
 
         .header {
-            background: var(--putih);
-            border-bottom: 4px solid var(--hitam);
             padding: 12px 16px;
-            position: sticky;
-            top: 0;
-            z-index: 50;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .header-top {
@@ -133,1379 +111,699 @@
             margin-bottom: 8px;
         }
 
-        .header-title {
-            font-size: 20px;
-            font-weight: bold;
-            text-transform: uppercase;
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .refresh-btn {
-            width: 40px;
-            height: 40px;
-            background: var(--kuning);
-            border: 3px solid var(--hitam);
-            box-shadow: 3px 3px 0 var(--hitam);
-            border-radius: 50%;
+        .btn-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            border: 4px solid var(--hitam);
+            background: var(--putih);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 18px;
             cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.35);
+            transition: transform 0.1s;
         }
 
-        .status-row {
+        .btn-icon:active {
+            transform: translate(2px, 2px);
+        }
+
+        .judul-chat {
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .status-indikator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #888;
+        }
+
+        .dot.online { background: #22c55e; }
+        .dot.offline { background: #ef4444; }
+
+        .info-bar {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px 16px;
             font-size: 13px;
-            align-items: center;
-        }
-
-        .status-online { color: #22C55E; font-weight: bold; }
-        .status-offline { color: #EF4444; font-weight: bold; }
-
-        /* ============= CHAT AREA ============= */
-        .chat-container {
-            padding: 16px;
-        }
-
-        #chatBox {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        /* Pesan Sistem — Selalu di atas */
-        .msg-system {
-            order: -1;
-            background: var(--biru);
-            color: var(--putih);
-            border: 3px solid var(--hitam);
-            box-shadow: 4px 4px 0 var(--hitam);
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .msg-system .sender {
             font-weight: bold;
-            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        /* ============== KOTAK CHAT ============== */
+        .chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 16px;
+            padding-bottom: 90px;
+        }
+
+        .pesan-wrapper {
+            margin-bottom: 16px;
+        }
+
+        .pesan-sistem {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0 20px;
+        }
+
+        .pesan-sistem .kotak-pesan {
+            background: var(--kuning);
+            border: 4px solid var(--hitam);
+            border-radius: 12px;
+            padding: 10px 18px;
+            max-width: 85%;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.25);
+        }
+
+        .pesan-sistem .nama-pengirim {
+            color: #666;
+            font-size: 12px;
             margin-bottom: 4px;
         }
 
-        .msg-wrapper {
+        .pesan-umum {
             display: flex;
             flex-direction: column;
-            max-width: 80%;
         }
 
-        .msg-wrapper.own {
-            align-self: flex-end;
+        .info-pengirim {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 4px;
+            padding: 0 4px;
         }
 
-        .msg-wrapper.other {
-            align-self: flex-start;
+        .nama-pengirim {
+            font-size: 14px;
+            font-weight: 900;
         }
 
-        .msg-header {
+        .waktu-pesan {
             font-size: 11px;
             color: #555;
-            margin-bottom: 4px;
-            display: flex;
-            gap: 8px;
         }
 
-        .msg-bubble {
+        .kotak-pesan {
             background: var(--putih);
-            border: 3px solid var(--hitam);
-            box-shadow: 4px 4px 0 var(--hitam);
+            border: 4px solid var(--hitam);
+            border-radius: 12px;
             padding: 10px 14px;
-            border-radius: 8px;
+            max-width: 80%;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.25);
             word-wrap: break-word;
         }
 
-        .msg-wrapper.own .msg-bubble {
-            background: var(--kuning);
+        .kotak-pesan .isi-pesan {
+            font-size: 15px;
+            line-height: 1.5;
+            user-select: text;
         }
 
-        /* ============= INPUT BAWAH ============= */
-        .input-bar {
+        /* ============== FORM KIRIM ============== */
+        .form-kirim {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             background: var(--putih);
-            border-top: 4px solid var(--hitam);
+            border-top: 5px solid var(--hitam);
             padding: 12px 16px;
             display: flex;
             gap: 10px;
-            align-items: center;
+            max-width: 600px;
+            margin: 0 auto;
+            z-index: 90;
         }
 
-        .input-bar input {
+        .form-kirim input {
             flex: 1;
             padding: 12px 16px;
-            font-size: 15px;
-            border: 3px solid var(--hitam);
+            font-size: 16px;
+            border: 4px solid var(--hitam);
+            border-radius: 10px;
             outline: none;
-            background: var(--putih);
+            user-select: text;
         }
 
-        .send-btn {
-            width: 44px;
-            height: 44px;
+        .btn-kirim {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            border: 4px solid var(--hitam);
             background: var(--biru);
             color: var(--putih);
-            border: 3px solid var(--hitam);
-            box-shadow: 3px 3px 0 var(--hitam);
-            border-radius: 4px;
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.35);
+            transition: transform 0.1s;
         }
 
-        /* ============= ALERT KUSTOM ============= */
-        #alertOverlay {
-            display: none;
+        .btn-kirim:active {
+            transform: translate(2px, 2px);
+        }
+
+        /* ============== ALERT KUSTOM ============== */
+        .overlay-alert {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: rgba(0,0,0,0.6);
-            justify-content: center;
-            align-items: center;
-            z-index: 200;
-        }
-
-        #alertOverlay.aktif {
             display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
         }
 
-        .alert-card {
+        .kotak-alert {
             background: var(--putih);
-            border: 4px solid var(--hitam);
-            box-shadow: 6px 6px 0 var(--hitam);
-            padding: 25px;
+            border: 5px solid var(--hitam);
+            border-radius: 14px;
+            padding: 28px;
             max-width: 340px;
             width: 90%;
-            text-align: center;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.4);
         }
 
-        .alert-card h3 {
-            margin-bottom: 12px;
-            font-size: 18px;
+        .kotak-alert h3 {
+            font-size: 20px;
+            margin-bottom: 14px;
         }
 
-        .alert-card p {
+        .kotak-alert p {
+            font-size: 15px;
             margin-bottom: 20px;
-            font-size: 14px;
+            line-height: 1.5;
         }
-                /* ============= LAYAR RECAPTCHA ============= */
-        #captchaScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
+
+        .kotak-alert button {
             width: 100%;
-            height: 100%;
-            background: #F8F5EB;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 150;
-            padding: 20px;
-        }
-
-        #captchaScreen.hidden {
-            display: none !important;
-        }
-
-        .g-recaptcha {
-            display: flex;
-            justify-content: center;
-        }
-
-        /* ============= REPLY CHAT ============= */
-
-        .msg-wrapper {
-            position: relative;
-        }
-
-        /* Kotak pesan yang akan dibalas */
-        .reply-preview {
-            background: rgba(59, 130, 212, 0.1);
-            border-left: 4px solid var(--biru);
-            padding: 6px 10px;
-            margin-bottom: 6px;
-            border-radius: 4px;
-            font-size: 13px;
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .reply-preview .nama-pengirim {
-            font-weight: bold;
-            color: var(--biru);
-            margin-right: 6px;
-        }
-
-        .reply-preview .teks-pesan {
-            color: #444;
-            opacity: 0.8;
-        }
-
-        .reply-preview .tutup-reply {
-            cursor: pointer;
+            padding: 12px;
+            background: var(--biru);
+            color: var(--putih);
+            border: 4px solid var(--hitam);
+            border-radius: 8px;
             font-size: 16px;
-            color: #888;
-            padding: 0 6px;
-            flex-shrink: 0;
-        }
-
-        .reply-preview .tutup-reply:hover {
-            color: #000;
-        }
-
-        /* Tampilan pesan yang dibalas di dalam chat */
-        .dibalas-dalam-pesan {
-            background: rgba(0,0,0,0.05);
-            border-left: 3px solid var(--biru);
-            padding: 4px 8px;
-            margin-bottom: 4px;
-            font-size: 12px;
-            opacity: 0.8;
-            border-radius: 3px;
-        }
-
-        /* Tampilan pesan yang dibalas di dalam chat */
-      .dibalas-dalam-pesan {
-    background: rgba(59, 130, 212, 0.1);
-    border-left: 4px solid #3B82D4;
-    padding: 6px 10px;
-    margin-bottom: 8px;
-    font-size: 13px;
-    border-radius: 4px;
-    color: #333;
-    position: sticky;
-    top: 0;
-    z-index: 5;
-}
-.dibalas-dalam-pesan strong {
-    color: #3B82D4;
-}
-
-        
-        
-                /* Menu opsi pesan */
-        .pesan-opsi-menu {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: white;
-            border: 3px solid black;
-            box-shadow: 4px 4px 0 black;
-            border-radius: 6px;
-            padding: 8px 12px;
-            z-index: 30;
-            display: none;
-            cursor: pointer;
-            font-size: 14px;
             font-weight: bold;
-            color: #DC2626;
-        }
-        .pesan-opsi-menu.aktif {
-            display: block;
-        }
-        .msg-wrapper {
-            position: relative;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.35);
         }
 
-.role-admin {
-    display: inline-block;
-    padding: 2px 6px;
-    margin-right: 5px;
-    color: #fff;
-    background: #e00000;
-    border: 1px solid #8b0000;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 800;
-}
-
-
-
-/* ===== LIQUID GLASS PUTIH 3D ===== */
-
-:root {
-  --glass-bg: rgba(255, 255, 255, 0.45);
-  --glass-bg-strong: rgba(255, 255, 255, 0.55);
-  --glass-border: rgba(255, 255, 255, 0.88);
-  --glass-border-soft: rgba(255, 255, 255, 0.72);
-  --glass-shadow: 0 18px 45px rgba(50, 60, 80, 0.18);
-  --glass-shadow-soft: 0 10px 30px rgba(50, 60, 80, 0.12);
-  --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.95);
-  --glass-deep: inset 0 -1px 1px rgba(0, 0, 0, 0.08);
-}
-
-body {
-  color: #25232a;
-  background:
-    radial-gradient(ellipse at 15% 10%, rgba(255, 255, 255, 0.95), transparent 42%),
-    radial-gradient(ellipse at 85% 25%, rgba(225, 231, 240, 0.85), transparent 45%),
-    radial-gradient(ellipse at 50% 90%, rgba(210, 220, 235, 0.75), transparent 48%),
-    linear-gradient(145deg, #e9edf3, #f8f9fc 50%, #e5e9f0);
-  background-attachment: fixed;
-}
-
-#nameScreen {
-  background: rgba(245, 247, 251, 0.35);
-  backdrop-filter: blur(26px) saturate(145%);
-  -webkit-backdrop-filter: blur(26px) saturate(145%);
-}
-
-/* ===== SEMUA BOX KARDU ===== */
-
-.name-card,
-.alert-card,
-.msg-bubble,
-.input-bar,
-.header,
-.pesan-opsi-menu,
-.system-message,
-.msg-wrapper .msg-bubble {
-  border-radius: 22px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  box-shadow:
-    var(--glass-highlight),
-    var(--glass-deep),
-    var(--glass-shadow);
-  backdrop-filter: blur(24px) saturate(150%);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
-}
-
-.name-card:hover,
-.alert-card:hover,
-.msg-bubble:hover,
-.pesan-opsi-menu:hover {
-  background: var(--glass-bg-strong);
-  box-shadow:
-    var(--glass-highlight),
-    var(--glass-deep),
-    0 22px 55px rgba(50, 60, 80, 0.22);
-}
-
-/* ===== KARTU NAMA ===== */
-
-.name-card,
-.alert-card {
-  color: #25232a;
-  padding: 18px;
-}
-
-.name-card p,
-.alert-card p {
-  color: #55545c;
-}
-
-/* ===== INPUT ===== */
-
-.name-card input,
-.input-bar input {
-  color: #25232a;
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid var(--glass-border-soft);
-  border-radius: 14px;
-  box-shadow: inset 0 1px 5px rgba(255, 255, 255, 0.9);
-}
-
-.name-card input::placeholder,
-.input-bar input::placeholder {
-  color: #85858d;
-}
-
-/* ===== TOMBOL ===== */
-
-.btn-yellow,
-.send-btn,
-.refresh-btn {
-  color: #fff;
-  background: linear-gradient(135deg, rgba(120, 130, 145, 0.95), rgba(85, 95, 110, 0.95));
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  border-radius: 16px;
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.45),
-    0 8px 22px rgba(40, 45, 55, 0.18);
-  transform: translateY(0);
-  transition: 0.22s ease;
-}
-
-.btn-yellow:hover,
-.send-btn:hover,
-.refresh-btn:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.55),
-    0 12px 30px rgba(40, 45, 55, 0.25);
-}
-
-.btn-yellow:active,
-.send-btn:active,
-.refresh-btn:active {
-  transform: translateY(1px);
-  box-shadow:
-    inset 0 2px 4px rgba(0, 0, 0, 0.12),
-    0 6px 16px rgba(40, 45, 55, 0.15);
-}
-
-/* ===== HEADER ===== */
-
-.header {
-  color: #25232a;
-  background: rgba(255, 255, 255, 0.42);
-  border-bottom: 1px solid var(--glass-border-soft);
-  border-radius: 0 0 22px 22px;
-  backdrop-filter: blur(22px) saturate(145%);
-  -webkit-backdrop-filter: blur(22px) saturate(145%);
-}
-
-/* ===== AREA CHAT ===== */
-
-#chatPage {
-  color: #25232a;
-  background:
-    radial-gradient(ellipse at 10% 15%, rgba(255, 255, 255, 0.35), transparent 45%),
-    radial-gradient(ellipse at 90% 70%, rgba(215, 221, 232, 0.3), transparent 45%);
-}
-
-.chat-container {
-  background: transparent;
-}
-
-/* ===== BUBBLE PESAN ===== */
-
-.msg-bubble {
-  color: #292831;
-  padding: 14px 16px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid var(--glass-border);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.92),
-    inset 0 -1px 1px rgba(0, 0, 0, 0.08),
-    0 12px 30px rgba(60, 65, 80, 0.12);
-  backdrop-filter: blur(20px) saturate(145%);
-  -webkit-backdrop-filter: blur(20px) saturate(145%);
-}
-
-.msg-wrapper.own .msg-bubble {
-  background: rgba(225, 230, 238, 0.7);
-  border-color: rgba(255, 255, 255, 0.85);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.95),
-    inset 0 -1px 1px rgba(0, 0, 0, 0.06),
-    0 12px 30px rgba(60, 65, 80, 0.14);
-}
-
-.msg-header {
-  color: #666873;
-}
-
-.msg-bubble a,
-.dibalas-dalam-pesan strong {
-  color: #ff9fc5;
-}
-
-/* ===== PESAN SISTEM ===== */
-
-.msg-system {
-  color: #4f515a;
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.78);
-  border-radius: 20px;
-  padding: 12px 16px;
-  text-align: center;
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.95),
-    inset 0 -1px 1px rgba(0, 0, 0, 0.08),
-    0 14px 35px rgba(50, 60, 80, 0.12);
-  backdrop-filter: blur(22px) saturate(150%);
-  -webkit-backdrop-filter: blur(22px) saturate(150%);
-}
-
-.msg-system strong {
-  color: #25232a;
-  font-weight: 600;
-}
-
-/* ===== INPUT BAWAH ===== */
-
-.input-bar {
-  background: rgba(255, 255, 255, 0.5);
-  border-top: 1px solid var(--glass-border-soft);
-  border-radius: 22px 22px 0 0;
-  backdrop-filter: blur(24px) saturate(150%);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
-}
-
-/* ===== OVERLAY ===== */
-
-#alertOverlay,
-#captchaScreen {
-  background: rgba(45, 48, 55, 0.28);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-/* ===== MENU OPSI PESAN ===== */
-
-.pesan-opsi-menu {
-  color: #292831;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.92);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.95),
-    0 12px 35px rgba(40, 45, 55, 0.18);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-/* ===== STATUS ===== */
-
-.status-online {
-  color: #27966f;
-}
-
-.status-offline {
-  color: #888b94;
-}
-
-/* ===== BADGE ADMIN ===== */
-
-.role-admin {
-  color: #fff;
-  background: #e00000;
-  border: 1px solid #ff7a8a;
-  box-shadow: 0 0 10px rgba(255, 0, 45, 0.45);
-}
-
-#bgVideo {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -2;
-}
-
-#bgVideo::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-}
-
-body {
-  color: #25232a;
-  background: transparent;
-  z-index: 0;
-}
-
-#bgVideo::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse at 15% 10%, rgba(255, 255, 255, 0.7), transparent 38%),
-    radial-gradient(ellipse at 85% 25%, rgba(225, 231, 240, 0.6), transparent 40%),
-    linear-gradient(145deg, rgba(233, 237, 243, 0.5), rgba(248, 249, 252, 0.5), rgba(229, 233, 240, 0.5));
-  z-index: 1;
-}
-
-/* Teks header putih */
-.header,
-.header .header-title,
-.header .status-row,
-.header .status-row span,
-.header .status-row span:not(#serverStatus) {
-  color: #fff !important;
-}
-
-/* Pertahankan warna khusus status */
-#serverStatus.status-online {
-  color: #32c48d !important;
-}
-
-#serverStatus.status-offline {
-  color: #ff7373 !important;
-}
-
-/* Box header video rasio 16:9 */
-.header {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  min-height: 0;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-/* Isi header tetap berada di dalam box */
-.header .header-top,
-.header .status-row {
-  position: relative;
-  z-index: 1;
-}
-
-
-
-.header {
-  position: relative;
-  padding-top: 62px !important;
-}
-
-.header-credit {
-  position: absolute;
-  top: 12px;
-  left: 200px;
-  z-index: 5;
-
-  color: #e00000;
-  font-size: 30px;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-}
-
-/* Izinkan seleksi teks hanya pada pesan chat */
-#chatBox,
-#chatBox * {
-  -webkit-user-select: text !important;
-  user-select: text !important;
-  -webkit-touch-callout: default;
-}
-
-#chatBox {
-  overflow-y: auto;
-  scroll-behavior: smooth;
-  scrollbar-gutter: stable;
-}
+        .hidden { display: none !important; }
         
+        /* Pesan orang lain di kiri */
+.pesan-umum {
+    align-items: flex-start;
+}
+
+/* Pesan diri sendiri di kanan */
+.pesan-saya {
+    align-items: flex-end;
+}
+
+.pesan-saya .kotak-pesan {
+    background: #3b82f6;
+    color: white;
+}
+
+.pesan-saya .waktu-pesan {
+    color: #000;
+}
+
+/* Badge Admin */
+.badge-admin {
+    background: #ef4444;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 2px solid black;
+    margin-left: 6px;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+}
+
 
     </style>
 </head>
 <body>
 
-
-
-    <!-- LAYAR VERIFIKASI RECAPTCHA -->
-    <div id="captchaScreen">
-        <div class="name-card">
-            <h2>🔐 VERIFIKASI</h2>
-            <p style="margin-bottom:20px">Centang kotak di bawah untuk membuktikan bahwa kamu bukan robot</p>
-            
-            <!-- Kotak reCAPTCHA Google -->
-            <div class="g-recaptcha" 
-                 data-sitekey="6LfiY_YtAAAAAO_ZVdT456vFsOxyCBjOWlQyG2TV"
-                 data-callback="berhasilVerifikasi"
-                 data-expired-callback="ulangiVerifikasi">
-            </div>
-            
-            <p id="statusVerifikasi" style="margin-top:15px; font-size:13px; color:#666">Belum diverifikasi</p>
+    <!-- MODAL MASUK NAMA -->
+    <div id="modalNama" class="modal-nama">
+        <div class="kotak-nama">
+            <h2><i class="fa-solid fa-comments"></i> PUBLIC CHAT</h2>
+            <p style="margin-bottom:12px; font-size:14px;">Masukkan nama untuk bergabung:</p>
+            <input type="text" id="inputNama" placeholder="Ketik nama kamu..." maxlength="20">
+            <button onclick="simpanNama()">MASUK CHAT</button>
         </div>
     </div>
-
-<!-- KONFIRMASI HAPUS -->
-<div id="confirmOverlay" onclick="tutupKonfirmasi(event)" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; justify-content:center; align-items:center;">
-    <div style="background:#fff; border:4px solid #000; box-shadow:6px 6px 0 #000; padding:24px; max-width:320px; text-align:center; font-family:inherit;">
-        <h3 style="margin:0 0 12px 0; font-size:18px;">⚠️ KONFIRMASI HAPUS</h3>
-        <p style="margin:0 0 20px 0; font-size:14px;">Yakin ingin menghapus pesan ini?<br>Tindakan ini tidak bisa dibatalkan!</p>
-        <div style="display:flex; gap:12px; justify-content:center;">
-            <button onclick="tutupKonfirmasi()" style="padding:8px 20px; border:3px solid #000; background:#eee; font-weight:bold; cursor:pointer; box-shadow:3px 3px 0 #000;">BATAL</button>
-            <button id="btnKonfirmasiHapus" style="padding:8px 20px; border:3px solid #000; background:#EF4444; color:#fff; font-weight:bold; cursor:pointer; box-shadow:3px 3px 0 #000;">HAPUS</button>
-        </div>
-    </div>
-</div>
-
-
-    <!-- LAYAR MASUK NAMA -->
-    <div id="nameScreen">
-        <div class="name-card">
-            <h2>👋 SELAMAT DATANG!</h2>
-            <p>Masukkan nama untuk memulai<br>Global Chat</p>
-            <input type="text" id="namaInput" placeholder="Masukkan nama..." maxlength="20" autocomplete="off">
-            <button class="btn-yellow" onclick="simpanNama()">MASUK →</button>
-        </div>
-    </div>
-
-
-
-
-    <!-- HALAMAN CHAT -->
-    <div id="chatPage">
-        <div class="header">
-<span class="header-credit">BY YOBEL</span>
-            <div class="header-top">
-                <video id="bgVideo" autoplay muted loop playsinline>
-  <source src="/fixio_tiktok_hd_1792665822291.mp4" type="video/mp4">
-</video>
-             
-                <span class="header-title">🌐 GLOBAL CHAT</span>
-                <button class="refresh-btn" onclick="refreshChat()">↻</button>
-            </div>
-            <div class="status-row">
-                <span id="serverStatus" class="status-offline">● OFFLINE</span>
-                <span>💬 CHAT TOTAL: <span id="totalChat">0</span></span>
-                <span>👤 USER ONLINE: <span id="totalOnline">0</span></span>
-                <span>🗓️ <span id="tanggalHari"></span></span>
-              
-            </div>
-        </div>
-
-        <div class="chat-container">
-            <div id="chatBox"></div>
-        </div>
-
-
-
-<!-- KOLOM KETIK PESAN KAMU TETAP SAMA -->
-<div class="input-bar">
-         <!-- KOTAK PREVIEW PESAN YANG DIBALAS -->
-<div id="replyPreviewBox" class="reply-preview" style="display: none;">
-  <span class="nama-pengirim" id="replyNama"></span>
-  <span class="teks-pesan" id="replyTeks"></span>
-  <span class="tutup-reply" onclick="batalkanBalas()">&times;</span>
-</div>
-
-    <input type="text" id="pesanInput" placeholder="Ketik pesan..." autocomplete="off"
-           onkeypress="if(event.key==='Enter')kirimPesan()">
-    <button class="send-btn" id="kirimBtn" onclick="kirimPesan()">➤</button>
-</div>
-
 
     <!-- ALERT KUSTOM -->
-    <div id="alertOverlay" onclick="tutupAlertDariLuar(event)">
-        <div class="alert-card">
-            <h3 id="alertJudul">Peringatan</h3>
+    <div id="alertBox" class="overlay-alert hidden">
+        <div class="kotak-alert">
+            <h3 id="alertJudul">Pesan</h3>
             <p id="alertTeks"></p>
-            <button class="btn-yellow" onclick="tutupAlert()">OK</button>
+            <button onclick="tutupAlert()">OK</button>
         </div>
     </div>
 
-    <script>
-
-
-        // ==============================================
-        // ⚙️ KONFIGURASI — GANTI DENGAN MILIKMU
-        // ==============================================
-        const SUPABASE_URL = 'https://izsrzxlnkcjzzvxetctd.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6c3J6eGxua2Nqenp2eGV0Y3RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzNjk0ODUsImV4cCI6MjEwNzk0NTQ4NX0.YAYFkVKNOr0e6-ZxoU4uPidKGXk7vKU_xeXpfOvkrZA';
-
-        const { createClient } = supabase;
-        const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        let namaPengguna = localStorage.getItem('gc_nama');
-        let userId = localStorage.getItem('gc_user_id');
-        let isSending = false;
-        let pesanTerakhirId = null;
-        let langgananPesan = null;
-        let hariTerakhir = localStorage.getItem('gc_hari_terakhir');
-
-        if (!userId) {
-            userId = 'u_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
-            localStorage.setItem('gc_user_id', userId);
-        }
-
-            // ==============================================
-        // 🔐 VERIFIKASI RECAPTCHA
-        // ==============================================
-        
-let pesanYangDibalas = null;
-
-function batalkanBalas() {
-    pesanYangDibalas = null;
-    document.getElementById('replyPreviewBox').style.display = 'none';
-}
-
-
-
-        let sudahVerifikasi = false;
-
-        function berhasilVerifikasi() {
-            sudahVerifikasi = true;
-            document.getElementById('statusVerifikasi').textContent = '✅ Terverifikasi!';
-            document.getElementById('statusVerifikasi').style.color = '#22C55E';
-            
-            setTimeout(() => {
-                document.getElementById('captchaScreen').classList.add('hidden');
-            }, 600);
-        }
-
-        function ulangiVerifikasi() {
-            sudahVerifikasi = false;
-            document.getElementById('statusVerifikasi').textContent = '⚠️ Silakan centang ulang';
-            document.getElementById('statusVerifikasi').style.color = '#EF4444';
-        }
-
-        // Sebelum simpan nama, pastikan sudah verifikasi
-        async function simpanNama() {
-            if (!sudahVerifikasi) {
-                tampilkanAlert('Silakan verifikasi terlebih dahulu!');
-                return;
-            }
-            
-            const input = document.getElementById('namaInput');
-            const nama = input.value.trim();
-            
-            if (nama.length < 3) {
-                tampilkanAlert('Nama minimal 3 huruf!');
-                return;
-            }
-            
-            namaPengguna = nama;
-            localStorage.setItem('gc_nama', namaPengguna);
-            document.getElementById('nameScreen').classList.add('hidden');
-            document.getElementById('chatPage').classList.add('show');
-            masukKeChat();
-        }
-
-        // ==============================================
-        // 📅 TANGGAL & RESET HARIAN OTOMATIS
-        // ==============================================
-        function ambilTanggalHariIni() {
-            const now = new Date();
-            return now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-        }
-
-        function ambilTanggalSingkat() {
-            return new Date().toDateString();
-        }
-
-        async function cekResetHarian() {
-            const hariIni = ambilTanggalSingkat();
-            if (hariTerakhir !== hariIni) {
-                hariTerakhir = hariIni;
-                localStorage.setItem('gc_hari_terakhir', hariTerakhir);
-                await hapusSemuaPesan();
-            }
-        }
-
-        async function hapusSemuaPesan() {
-            try {
-                await sb.from('pesan').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-                const chatBox = document.getElementById('chatBox');
-                if (chatBox) chatBox.innerHTML = '';
-                tambahPesanSistem('📭 Chat telah direset untuk hari baru!');
-            } catch (err) {
-                console.error('Error reset:', err);
-            }
-        }
-
-        function tampilkanTanggal() {
-            const el = document.getElementById('tanggalHari');
-            if (el) el.textContent = ambilTanggalHariIni();
-        }
-
-        // ==============================================
-        // 🪟 ALERT KUSTOM
-        // ==============================================
-        function tampilkanAlert(teks, judul = 'Peringatan') {
-            document.getElementById('alertJudul').textContent = judul;
-            document.getElementById('alertTeks').textContent = teks;
-            document.getElementById('alertOverlay').classList.add('aktif');
-        }
-        function tutupAlert() {
-            document.getElementById('alertOverlay').classList.remove('aktif');
-        }
-        function tutupAlertDariLuar(event) {
-            if (event.target.id === 'alertOverlay') tutupAlert();
-        }
-
-        // ==============================================
-        // 🚀 INISIALISASI
-        // ==============================================
-                document.addEventListener('DOMContentLoaded', () => {
-            tampilkanTanggal();
-            cekResetHarian();
-            
-            // Cek apakah sudah pernah verifikasi + punya nama
-            if (namaPengguna && namaPengguna.length >= 3) {
-                document.getElementById('captchaScreen').classList.add('hidden');
-                document.getElementById('nameScreen').classList.add('hidden');
-                document.getElementById('chatPage').classList.add('show');
-                masukKeChat();
-            } else if (namaPengguna && namaPengguna.length < 3) {
-                // Punya nama tapi belum lengkap → lanjut ke nama
-                document.getElementById('captchaScreen').classList.add('hidden');
-            }
-            // Kalau belum verifikasi → tetap di layar captcha
-        });
-
-//nama khusus [ ADMIN]
-const NAMA_ADMIN = ['yobel', 'namaadminlain'];
-
-function buatNamaDenganBadge(namaAsli) {
-    const nama = String(namaAsli || 'Anonim').trim();
-    const admin = NAMA_ADMIN.some(
-        item => item.toLowerCase() === nama.toLowerCase()
-    );
-
-    return `${admin ? '<span class="role-admin">[ ADMIN ]</span> ' : ''}${escapeHtml(nama)}`;
-}
-
-
-        // ==============================================
-        // 👤 MASUK NAMA — TIDAK BISA GANTI
-        // ==============================================
-        async function simpanNama() {
-            const input = document.getElementById('namaInput');
-            const nama = input.value.trim();
-            
-            if (nama.length < 3) {
-                tampilkanAlert('Nama minimal 3 huruf!');
-                return;
-            }
-            
-            namaPengguna = nama;
-            localStorage.setItem('gc_nama', namaPengguna);
-            document.getElementById('nameScreen').classList.add('hidden');
-            document.getElementById('chatPage').classList.add('show');
-            masukKeChat();
-        }
-
-        async function masukKeChat() {
-            await perbaruiStatusUser('online');
-            await muatPesanLama();
-            mulaiDengarkanPesan();
-            await hitungUserOnline();
-            
-            tambahPesanSistem(`🚀 Welcome ${namaPengguna}, To Global Chat.`);
-            
-            document.getElementById('serverStatus').className = 'status-online';
-            document.getElementById('serverStatus').textContent = '● ONLINE';
-            
-            // Auto refresh tiap 4 detik
-            setInterval(async () => {
-                await muatPesanLama();
-                await hitungUserOnline();
-                cekResetHarian();
-            }, 4000);
-            
-            setInterval(hitungUserOnline, 10000);
-        }
-
-        function tambahPesanSistem(teks) {
-            const chatBox = document.getElementById('chatBox');
-            if (!chatBox) return;
-            
-            const adaSistem = chatBox.querySelector('.msg-system');
-            const html = `
-                <div class="msg-system" id="pesanSistemUtama">
-                    <div class="sender">[ SISTEM ]</div>
-                    <div>${escapeHtml(teks)}</div>
+    <!-- KONTEN UTAMA -->
+    <div id="kontenUtama" class="hidden">
+        <div class="header-wrapper">
+            <div class="header">
+                <div class="header-top">
+                    <div class="header-left">
+                        <button class="btn-icon" onclick="scrollKeBawah()" title="Scroll ke bawah">
+                            <i class="fa-solid fa-comment"></i>
+                        </button>
+                        <h1 class="judul-chat"> PUBLIC CHAT</h1>
+                    </div>
+                    <div class="header-right">
+                        <div class="status-indikator">
+                            <span id="dotServer" class="dot offline"></span>
+                            <span id="teksServer">Offline</span>
+                        </div>
+                        <button class="btn-icon" onclick="refreshChat()" title="Refresh Chat">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </button>
+                    </div>
                 </div>
-            `;
+                <div class="info-bar">
+                    <span id="totalPesan">💬 Total Chat: 0</span>
+                    <span id="jumlahOnline">🟢 Online: 0</span>
+                    <span id="tanggalHariIni">📅 Tanggal</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="daftarChat" class="chat-container"></div>
+
+        <div class="form-kirim">
+            <input type="text" id="inputPesan" placeholder="Ketik pesan kamu..." maxlength="500" on-keypress="cekEnter(event)">
+            <button class="btn-kirim" onclick="kirimPesan()">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+<script>
+// ==============================================
+// KONFIGURASI — GANTI DENGAN MILIK KAMU
+const SUPABASE_URL = 'https://izsrzxlnkcjzzvxetctd.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6c3J6eGxua2Nqenp2eGV0Y3RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzNjk0ODUsImV4cCI6MjEwNzk0NTQ4NX0.YAYFkVKNOr0e6-ZxoU4uPidKGXk7vKU_xeXpfOvkrZA';
+// ==============================================
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Variabel Global
+let namaPengguna = localStorage.getItem('namaPengguna') || null;
+let deviceId = localStorage.getItem('deviceId') || null;
+let lastDateChecked = null;
+let totalPesanSaatIni = 0;
+let scrollOtomatis = true;
+
+// Inisialisasi Device ID
+if (!deviceId) {
+    deviceId = 'dev_' + Date.now() + '_' + Math.random().toString(36).substring(2, 10);
+    localStorage.setItem('deviceId', deviceId);
+}
+
+// ============== ALERT KUSTOM ==============
+function tampilkanAlert(teks, judul='Pesan') {
+    document.getElementById('alertJudul').textContent = judul;
+    document.getElementById('alertTeks').textContent = teks;
+    document.getElementById('alertBox').classList.remove('hidden');
+}
+
+function tutupAlert() {
+    document.getElementById('alertBox').classList.add('hidden');
+}
+
+// ============== FORMAT WAKTU & TANGGAL ==============
+function dapatkanZonaWaktu() {
+    const offset = new Date().getTimezoneOffset();
+    if (offset === -480) return 'WITA'; // UTC+8
+    if (offset === -420) return 'WIB';  // UTC+7
+    if (offset === -540) return 'WIT';  // UTC+9
+    return '';
+}
+
+function formatWaktu(tanggal) {
+    const t = new Date(tanggal);
+    const jam = String (t.getHours()).padStart(2, '0');
+    const menit = String(t.getMinutes()).padStart(2, '0');
+    const zona = dapatkanZonaWaktu();
+    return `${jam}:${menit} ${zona}`;
+}
+
+function formatTanggal(tanggal) {
+    const t = new Date(tanggal);
+    const hari = String(t.getDate()).padStart(2, '0');
+    const bulan = String(t.getMonth() + 1).padStart(2, '0');
+    const tahun = t.getFullYear();
+    return `${hari}/${bulan}/${tahun}`;
+}
+
+function dapatkanTanggalHariIni() {
+    return formatTanggal(new Date());
+}
+
+// ============== CEK RESET HARIAN ==============
+async function cekResetHarian() {
+    try {
+        // Ambil tanggal terakhir reset
+        const { data, error } = await sb
+            .from('chat_config')
+            .select('last_reset_date')
+            .eq('id', 1)
+            .single();
+
+        if (error) throw error;
+
+        // Bandingkan hanya tanggal (tanpa jam)
+        const hariIni = new Date().toISOString().split('T')[0]; // format: 2026-10-30
+        const hariTerakhirReset = data.last_reset_date;
+
+        console.log('Hari ini:', hariIni, '| Terakhir reset:', hariTerakhirReset);
+
+        if (hariIni !== hariTerakhirReset) {
+            console.log('🔄 Reset dimulai...');
             
-            if (adaSistem) {
-                adaSistem.outerHTML = html;
-            } else {
-                chatBox.insertAdjacentHTML('afterbegin', html);
-            }
+            // Hapus semua pesan
+            const { error: hapusError } = await sb
+                .from('pesan')
+                .delete()
+                .neq('id', 0);
+            
+            if (hapusError) throw hapusError;
+            
+            // Update tanggal reset hari ini
+            const { error: updateError } = await sb
+                .from('chat_config')
+                .update({ last_reset_date: hariIni })
+                .eq('id', 1);
+            
+            if (updateError) throw updateError;
+            
+            console.log('✅ Reset selesai, tanggal diperbarui ke:', hariIni);
+            return true; // ada reset
         }
+        return false; // tidak ada reset
+    } catch (e) {
+        console.log('❌ Error cek reset:', e.message);
+        return false;
+    }
+}
 
-        // ==============================================
-        // 📡 STATUS USER ONLINE
-        // ==============================================
-        async function perbaruiStatusUser(status) {
-            try {
-                await sb.from('users').upsert({
-                    id: userId, nama: namaPengguna, status: status,
-                    last_seen: new Date().toISOString()
-                });
-            } catch (err) {
-                console.error('Error status:', err);
-            }
-        }
 
-        async function hitungUserOnline() {
-            try {
-                const { data, error } = await sb
-                    .from('users')
-                    .select('id, nama, status, last_seen');
-                
-                if (error || !data) return;
-                
-                const sekarang = new Date();
-                const limaMenitLalu = new Date(sekarang.getTime() - 5 * 60 * 1000).toISOString();
-                
-                // Bersihkan user yang hilang
-                for (const u of data) {
-                    if (u.status === 'online' && u.last_seen && u.last_seen < limaMenitLalu) {
-                        await sb.from('users').update({ status: 'offline' }).eq('id', u.id);
-                    }
-                }
-                
-                const { data: dataBaru } = await sb.from('users').select('status');
-                const online = dataBaru.filter(u => u.status === 'online').length;
-                document.getElementById('totalOnline').textContent = online;
-            } catch (err) {
-                console.error('Error hitung online:', err);
-            }
-        }
 
-        // ==============================================
-        // 💬 KIRIM PESAN
-        // ==============================================
-        async function kirimPesan() {
-    if (isSending) return;
+async function resetChatHarian() {
+    try {
+        // Hapus semua pesan
+        await sb.from('pesan').delete().neq('id', 0);
+        
+        // Update tanggal reset
+        await sb
+            .from('chat_config')
+            .update({ last_reset_date: new Date().toISOString().split('T')[0] })
+            .eq('id', 1);
+
+        console.log('✅ Chat harian direset');
+    } catch (e) {
+        console.log('Reset error:', e.message);
+    }
+}
+
+// ============== SIMPAN NAMA ==============
+function simpanNama() {
+    const input = document.getElementById('inputNama');
+    const nama = input.value.trim();
     
-    const input = document.getElementById('pesanInput');
-    const pesan = input.value.trim();
-    
-    if (!pesan) {
-        tampilkanAlert('Tulis pesan dulu!');
+    if (!nama) {
+        tampilkanAlert('Silakan masukkan nama terlebih dahulu!', 'Peringatan');
         return;
     }
     
-    isSending = true;
-    document.getElementById('kirimBtn').disabled = true;
+    namaPengguna = nama;
+    localStorage.setItem('namaPengguna', namaPengguna);
+    document.getElementById('modalNama').classList.add('hidden');
+    document.getElementById('kontenUtama').classList.remove('hidden');
     
-    const pesanBaru = {
-        user_id: userId,
-        nama: namaPengguna,
-        pesan: pesan,
-        waktu: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-        tanggal: new Date().toDateString(),
-        balas_ke: pesanYangDibalas // ✅ Data pesan yang dibalas ikut dikirim
-    };
-    
+    initChat();
+}
+
+// ============== UPDATE STATUS ONLINE ==============
+async function perbaruiStatusOnline() {
     try {
-        console.log('📤 Mengirim pesan...', pesanBaru);
+        const { data, error } = await sb
+            .from('user_online')
+            .upsert(
+                { 
+                    nama: namaPengguna, 
+                    device_id: deviceId,
+                    last_seen: new Date().toISOString()
+                },
+                { onConflict: 'device_id' }
+            );
         
-        const { data, error } = await sb.from('pesan').insert([pesanBaru]);
+        if (error) throw error;
+        document.getElementById('dotServer').classList.add('online');
+        document.getElementById('dotServer').classList.remove('offline');
+        document.getElementById('teksServer').textContent = 'Online';
+    } catch (e) {
+        console.log('Status online error:', e.message);
+        document.getElementById('dotServer').classList.remove('online');
+        document.getElementById('dotServer').classList.add('offline');
+        document.getElementById('teksServer').textContent = 'Offline';
+    }
+}
+
+async function bersihkanUserOffline() {
+    const batasWaktu = new Date(Date.now() - 60 * 1000).toISOString(); // 1 menit
+    try {
+        await sb
+            .from('user_online')
+            .delete()
+            .lt('last_seen', batasWaktu);
+    } catch (e) {
+        console.log('Bersihkan offline error:', e.message);
+    }
+}
+
+async function hitungUserOnline() {
+    try {
+        await bersihkanUserOffline();
+        const { count, error } = await sb
+            .from('user_online')
+            .select('*', { count: 'exact', head: true });
         
-        if (error) {
-            console.error('❌ Error dari Supabase:', error);
-            throw new Error(error.message || 'Gagal kirim pesan');
+        if (error) throw error;
+        document.getElementById('jumlahOnline').innerHTML = `<i class="fa-solid fa-circle"></i> Online: ${count || 0}`;
+    } catch (e) {
+        console.log('Hitung online error:', e.message);
+    }
+}
+
+// ============== MUAT & TAMPILKAN PESAN ==============
+async function muatPesan() {
+    try {
+        const { data, error } = await sb
+            .from('pesan')
+            .select('*')
+            .order('waktu', { ascending: true });
+        
+        if (error) throw error;
+        
+        const daftarChat = document.getElementById('daftarChat');
+        const posisiSebelum = daftarChat.scrollHeight - daftarChat.scrollTop;
+        
+        daftarChat.innerHTML = '';
+        
+        // Pesan Selamat Datang dari Sistem
+        tambahPesanSistem(`Welcome ${namaPengguna}! To Global Chat.`);
+        
+        // Tampilkan pesan-pesan
+        if (data && data.length > 0) {
+            data.forEach(pesan => tambahPesanUI(pesan));
         }
         
-        console.log('✅ Pesan terkirim!', data);
-        input.value = '';
-        batalkanBalas(); // Hapus preview reply setelah kirim
+        totalPesanSaatIni = data ? data.length : 0;
+        document.getElementById('totalPesan').innerHTML = `<i class="fa-solid fa-message"></i> Total Chat: ${totalPesanSaatIni}`;
         
-    } catch (err) {
-        console.error('❌ Error:', err);
-        tampilkanAlert('Gagal: ' + err.message);
+        // Scroll ke bawah otomatis
+        if (scrollOtomatis) {
+            scrollKeBawah();
+        } else {
+            daftarChat.scrollTop = daftarChat.scrollHeight - posisiSebelum;
+        }
+    } catch (e) {
+        console.log('Muat pesan error:', e.message);
     }
+}
+
+function tambahPesanUI(pesan) {
+    const daftarChat = document.getElementById('daftarChat');
+    const elemen = document.createElement('div');
     
-    isSending = false;
-    document.getElementById('kirimBtn').disabled = false;
+    const adalahSaya = pesan.nama === namaPengguna;
+    const isAdmin = pesan.nama === 'Yobel'; // Ganti dengan nama admin yang kamu mau
+    
+    elemen.className = `pesan-wrapper pesan-umum ${adalahSaya ? 'pesan-saya' : ''}`;
+    
+    const badgeAdmin = isAdmin ? `<span class="badge-admin">ADMIN</span>` : '';
+    
+    elemen.innerHTML = `
+        <div class="info-pengirim">
+            ${!adalahSaya ? `<span class="nama-pengirim">${escapeHtml(pesan.nama)}${badgeAdmin}</span>` : ''}
+            <span class="waktu-pesan">${formatWaktu(pesan.waktu)}</span>
+            ${adalahSaya ? `<span class="nama-pengirim">${escapeHtml(pesan.nama)}${badgeAdmin}</span>` : ''}
+        </div>
+        <div class="kotak-pesan">
+            <div class="isi-pesan">${escapeHtml(pesan.pesan)}</div>
+        </div>
+    `;
+    daftarChat.appendChild(elemen);
 }
 
 
 
+function tambahPesanSistem(teks) {
+    const daftarChat = document.getElementById('daftarChat');
+    const elemen = document.createElement('div');
+    elemen.className = 'pesan-wrapper pesan-sistem';
+    elemen.innerHTML = `
+        <div class="kotak-pesan" style="background: #facc15;">
+            <div class="nama-pengirim"><i class="fa-solid fa-gear"></i> SISTEM</div>
+            <div class="isi-pesan">${escapeHtml(teks)}</div>
+        </div>
+    `;
+    daftarChat.appendChild(elemen);
+}
 
-        // ==============================================
-        // 🔄 REFRESH MANUAL
-        // ==============================================
-        async function refreshChat() {
-            const btn = document.querySelector('.refresh-btn');
-            btn.style.transform = 'rotate(360deg)';
-            setTimeout(() => btn.style.transform = '', 300);
-            await muatPesanLama();
-            window.scrollTo(0, document.body.scrollHeight);
-        }
+function escapeHtml(teks) {
+    const div = document.createElement('div');
+    div.textContent = teks;
+    return div.innerHTML;
+}
+
+// ============== KIRIM PESAN ==============
+async function kirimPesan() {
+    const input = document.getElementById('inputPesan');
+    const teks = input.value.trim();
+    
+    if (!teks) return;
+    
+    try {
+        // Pastikan tidak sedang dalam proses reset
+        await cekResetHarian();
+        
+        const { error } = await sb
+            .from('pesan')
+            .insert({
+                nama: namaPengguna,
+                pesan: teks
+            });
+        
+        if (error) throw error;
+        input.value = '';
+        scrollOtomatis = true;
+        
+        // Langsung muat ulang pesan agar muncul seketika
+        setTimeout(() => muatPesan(), 300);
+    } catch (e) {
+        tampilkanAlert('Gagal mengirim pesan: ' + e.message, 'Error');
+    }
+}
 
 
-        // ==============================================
-        // ↩️ BALAS PESAN — KLIK 2 KALI CEPAT
-        // ==============================================
-        function mulaiBalasPesan(msgElement) {
-            const nama = msgElement.getAttribute('data-nama');
-            const pesan = msgElement.getAttribute('data-pesan');
-            
-            pesanYangDibalas = {
-                nama: nama,
-                pesan: pesan
-            };
-            
-            // Tampilkan preview di atas kolom input
-            document.getElementById('replyNama').textContent = nama + ':';
-            document.getElementById('replyTeks').textContent = pesan + '...';
-            document.getElementById('replyPreviewBox').style.display = 'flex';
-            
-            // Fokus ke kolom ketik
-            document.getElementById('pesanInput').focus();
-        }
-
-        function batalkanBalas() {
-            pesanYangDibalas = null;
-            document.getElementById('replyPreviewBox').style.display = 'none';
-        }
-
-
-        // ==============================================
-        // 📥 MUAT PESAN
-        // ==============================================
-async function muatPesanLama(forceScrollKeBawah = false) {
-  const { data: pesan, error } = await sb
-    .from('pesan')
-    .select('*')
-    .order('created_at', { ascending: true });
-
-  if (error) return;
-
-  const chatBox = document.getElementById('chatBox');
-
-  // === HAPUS baris yang mengosongkan chatBox di sini ===
-  // JANGAN pakai: chatBox.innerHTML = '';  <-- ini penyebab lompat!
-
-  // Cari pesan yang belum ditampilkan saja
-  const indexMulai = pesanTerakhirId
-    ? pesan.findIndex(p => p.id === pesanTerakhirId) + 1
-    : 0;
-
-  const pesanBaru = pesan.slice(indexMulai);
-
-  if (pesanBaru.length === 0) return; // Tidak ada pesan baru → selesai
-
-  // Tampilkan hanya pesan yang baru
-  pesanBaru.forEach(p => tampilkanPesan(p));
-  pesanTerakhirId = pesan[pesan.length - 1]?.id;
-
-  // Scroll hanya jika perlu
-  if (forceScrollKeBawah) {
-    scrollKeBawah();
-  } else {
-    const sudahDiBawah = chatBox.scrollTop + chatBox.clientHeight >= chatBox.scrollHeight - 100;
-    if (sudahDiBawah) scrollKeBawah();
-  }
+// ============== REFRESH & SCROLL ==============
+function refreshChat() {
+    muatPesan();
+    tampilkanAlert('Chat diperbarui!', 'Info');
 }
 
 function scrollKeBawah() {
-  const chatBox = document.getElementById('chatBox');
-  chatBox.scrollTo({
-    top: chatBox.scrollHeight,
-    behavior: 'smooth'
-  });
+    const daftarChat = document.getElementById('daftarChat');
+    daftarChat.scrollTop = daftarChat.scrollHeight;
 }
 
-         function mulaiDengarkanPesan() {
-             if (langgananPesan) langgananPesan.unsubscribe();
-             
-             langgananPesan = sb
-                 .channel('chat-live')
-                 .on(
-                     'postgres_changes',
-                     { event: 'INSERT', schema: 'public', table: 'pesan' },
-                     (res) => {
-                         tampilkanPesan(res.new);
-                         muatPesanLama();
-                     }
-                 )
-                 .subscribe();
-         }
-         function tampilkanPesan(pesan) {
-    if (pesanTerakhirId === pesan.id) return;
-    pesanTerakhirId = pesan.id;
-    
-    const chatBox = document.getElementById('chatBox');
-    if (!chatBox) return;
-    
-    const ada = document.querySelector(`[data-msg-id="${pesan.id}"]`);
-    if (ada) return;
-    
-    const tipe = pesan.user_id === userId ? 'own' : 'other';
-    
-    // ✅ Tampilan pesan yang dibalas
-    let balasHtml = '';
-    if (pesan.balas_ke) {
-        // Kalau balas_ke berupa string JSON, ubah jadi objek dulu
-        let balasData = pesan.balas_ke;
-        if (typeof balasData === 'string') {
-            try { balasData = JSON.parse(balasData); } catch(e) {}
-        }
-        
-        balasHtml = `
-            <div class="dibalas-dalam-pesan">
-                ↩️ <strong>${escapeHtml(balasData.nama)}:</strong> ${escapeHtml(balasData.pesan)}
-            </div>
-        `;
-    }
-    
-        chatBox.insertAdjacentHTML('beforeend', `
-        <div class="msg-wrapper ${tipe}" data-msg-id="${pesan.id}"
-             data-nama="${escapeHtml(pesan.nama)}"
-             data-pesan="${escapeHtml(pesan.pesan).substring(0, 50)}"
-             ondblclick="mulaiBalasPesan(this)"
-             oncontextmenu="tahanPesan(event, this)">
-            
-            <!-- Menu Hapus — HANYA muncul di pesan milik sendiri -->
-            ${tipe === 'own' ? `
-            <div class="pesan-opsi-menu" id="opsi-${pesan.id}" onclick="konfirmasiHapus('${pesan.id}')">
-                🗑️ Hapus Pesan
-            </div>
-            ` : ''}
-            
-            <div class="msg-header">
-<span>
-  ${String(pesan.nama || '').trim().toLowerCase() === 'yobel'
-    ? '<span class="role-admin">[ ADMIN ]</span> '
-    : ''}
-  ${escapeHtml(pesan.nama || 'Anonim')}
-</span>
-
-                <span>${pesan.waktu}</span>
-            </div>
-            
-            <div class="msg-bubble">
-                ${balasHtml}
-                ${escapeHtml(pesan.pesan)}
-            </div>
-        </div>
-    `);
-
-    
-    chatBox.scrollTop = chatBox.scrollHeight;
+// Deteksi scroll manual
+function cekScrollManual() {
+    const daftarChat = document.getElementById('daftarChat');
+    const jarakKeBawah = daftarChat.scrollHeight - daftarChat.scrollTop - daftarChat.clientHeight;
+    scrollOtomatis = jarakKeBawah < 50;
 }
 
-        // ==============================================
-        // 🗑️ FITUR HAPUS PESAN SENDIRI
-        // ==============================================
-        
-        // Tutup semua menu opsi saat klik di tempat lain
-        document.addEventListener('click', function() {
-            document.querySelectorAll('.pesan-opsi-menu').forEach(m => m.classList.remove('aktif'));
-        });
-
-        // Tahan lama / klik kanan untuk munculkan menu
-        function tahanPesan(event, elemen) {
-            event.preventDefault();
-            const msgId = elemen.getAttribute('data-msg-id');
-            const menu = document.getElementById(`opsi-${msgId}`);
-            
-            // Tutup semua menu lain dulu
-            document.querySelectorAll('.pesan-opsi-menu').forEach(m => m.classList.remove('aktif'));
-            
-            // Hanya tampilkan menu kalau ini pesan milik sendiri
-            if (menu) {
-                menu.classList.add('aktif');
-            }
-            // Kalau pesan orang lain → tidak muncul apa-apa
-        }
-
-        // Konfirmasi sebelum hapus
-        let pesanYangAkanDihapus = null;
-
-function konfirmasiHapus(msgId) {
-    tutupSemuaMenu();
-    pesanYangAkanDihapus = msgId;
-    
-    const overlay = document.getElementById('confirmOverlay');
-    overlay.style.display = 'flex';
-    overlay.style.alignItems = 'center';
-    overlay.style.justifyContent = 'center';
-}
-
-function tutupKonfirmasi(event) {
-    // Tutup kalau klik di luar kotak atau tombol BATAL
-    if (!event || event.target.id === 'confirmOverlay') {
-        document.getElementById('confirmOverlay').style.display = 'none';
-        pesanYangAkanDihapus = null;
+// ============== EVENT ENTER ==============
+function cekEnter(event) {
+    if (event.key === 'Enter') {
+        kirimPesan();
     }
 }
 
-// Tambahkan event listener saat halaman dimuat
-document.addEventListener('DOMContentLoaded', function() {
-    const btnHapus = document.getElementById('btnKonfirmasiHapus');
-    if (btnHapus) {
-        btnHapus.onclick = function() {
-            if (pesanYangAkanDihapus) {
-                hapusPesan(pesanYangAkanDihapus);
-            }
-            document.getElementById('confirmOverlay').style.display = 'none';
-            pesanYangAkanDihapus = null;
-        };
-    }
-});
-
-
-        function tutupSemuaMenu() {
-            document.querySelectorAll('.pesan-opsi-menu').forEach(m => m.classList.remove('aktif'));
-        }
-
-        // Kirim perintah hapus ke database
-        async function hapusPesan(msgId) {
-            try {
-                const { error } = await sb.from('pesan').delete().eq('id', msgId);
-                
-                if (error) throw error;
-                
-                // Hapus elemen dari layar
-                const pesanElemen = document.querySelector(`[data-msg-id="${msgId}"]`);
-                if (pesanElemen) {
-                    pesanElemen.style.opacity = '0';
-                    pesanElemen.style.transition = 'opacity 0.3s ease';
-                    setTimeout(() => pesanElemen.remove(), 300);
-                }
-                
-                console.log('✅ Pesan berhasil dihapus');
-            } catch (err) {
-                console.error('❌ Gagal hapus:', err);
-                tampilkanAlert('Gagal menghapus pesan!');
-            }
-        }
-
-
-         function escapeHtml(t) {
-             if (!t) return '';
-             const div = document.createElement('div');
-             div.textContent = t;
-             return div.innerHTML;
-         }
-         // ==============================================
-         // 🚪 KELUAR / TUTUP
-         // ==============================================
-         window.addEventListener('beforeunload', async () => {
-             if (userId) {
-                 await sb.from('users').update({ status: 'offline' }).eq('id', userId);
-                 if (langgananPesan) langgananPesan.unsubscribe();
-             }
-         });
-         
-// ==============================================
-// ✅ OTOMATIS KELUAR SAAT MENUTUP WEB
-// ==============================================
-window.addEventListener('beforeunload', async function() {
-    if (userId) {
+// ============== INISIALISASI ==============
+async function initChat() {
+    document.getElementById('tanggalHariIni').innerHTML = `<i class="fa-solid fa-calendar"></i> ${dapatkanTanggalHariIni()}`;
+    
+    // 1. CEK & RESET DULU — TUNGGU SAMPAI SELESAI
+    const baruDiReset = await cekResetHarian();
+    
+    // 2. BARU KEMUDIAN MUAT PESAN
+    await perbaruiStatusOnline();
+    await muatPesan();
+    await hitungUserOnline();
+    
+    // ... sisa kode kamu tetap sama
+    document.getElementById('daftarChat').addEventListener('scroll', cekScrollManual);
+    
+    setInterval(async () => {
+        await muatPesan();
+        await perbaruiStatusOnline();
+        await hitungUserOnline();
+    }, 4000);
+    
+    setInterval(perbaruiStatusOnline, 30000);
+    setInterval(bersihkanUserOffline, 60000);
+    
+    window.addEventListener('blur', async () => {
         try {
-            await sb.from('online_users')
-                .delete()
-                .eq('user_id', userId);
-        } catch (e) {
-            console.log('Tidak perlu hapus, sudah terhapus');
-        }
-    }
-});
-
-// Juga saat kehilangan koneksi/halaman tidak terlihat
-document.addEventListener('visibilitychange', async function() {
-    if (document.visibilityState === 'hidden' && userId) {
-        try {
-            await sb.from('online_users')
-                .delete()
-                .eq('user_id', userId);
+            await sb.from('user_online').delete().eq('device_id', deviceId);
         } catch (e) {}
+    });
+    
+    window.addEventListener('focus', perbaruiStatusOnline);
+}
+
+
+// ============== MULAI ==============
+document.addEventListener('DOMContentLoaded', () => {
+    if (namaPengguna) {
+        document.getElementById('modalNama').classList.add('hidden');
+        document.getElementById('kontenUtama').classList.remove('hidden');
+        initChat();
     }
 });
 
-     </script>
- </body>
- </html>
+</script>
+</body>
+</html>
+
