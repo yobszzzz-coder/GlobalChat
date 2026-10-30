@@ -7,14 +7,29 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
+    @font-face {
+    font-family: 'AROMA';
+    src: url('AROMA.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial Black', 'Helvetica Bold', sans-serif;
+            font-family: 'AROMA', sans-serif;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
         }
+        /* ===== FONT KETIK & ISI PESAN — Arial Black / Helvetica Bold ===== */
+.isi-pesan,
+#inputPesan,
+.waktu-pesan,
+.pesan-dibalas,
+.reply-preview .teks {
+    font-family: 'Arial Black', 'Helvetica Bold', sans-serif;
+}
+
 
         body {
             background-color: #fef9c3;
@@ -240,48 +255,120 @@
             user-select: text;
         }
 
-        /* ============== FORM KIRIM ============== */
-        .form-kirim {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--putih);
-            border-top: 5px solid var(--hitam);
-            padding: 12px 16px;
-            display: flex;
-            gap: 10px;
-            max-width: 600px;
-            margin: 0 auto;
-            z-index: 90;
-        }
+/* Preview Balasan di atas kotak ketik — gaya WhatsApp */
+.reply-preview {
+    background: #f0f2f5;
+    border-left: 3px solid #2563eb;
+    padding: 8px 12px;
+    margin: 0 0 8px 0;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-        .form-kirim input {
-            flex: 1;
-            padding: 12px 16px;
-            font-size: 16px;
-            border: 4px solid var(--hitam);
-            border-radius: 10px;
-            outline: none;
-            user-select: text;
-        }
+.reply-preview.hidden {
+    display: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    height: 0 !important;
+}
 
-        .btn-kirim {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px;
-            border: 4px solid var(--hitam);
-            background: var(--biru);
-            color: var(--putih);
-            font-size: 20px;
-            cursor: pointer;
-            box-shadow: 3px 3px 0 rgba(0,0,0,0.35);
-            transition: transform 0.1s;
-        }
+.reply-preview .isi-balasan {
+    flex: 1;
+    overflow: hidden;
+}
 
-        .btn-kirim:active {
-            transform: translate(2px, 2px);
-        }
+.reply-preview .nama {
+    font-weight: 600;
+    font-size: 13px;
+    color: #2563eb;
+    margin-bottom: 2px;
+}
+
+.reply-preview .teks {
+    font-size: 13px;
+    color: #65676b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.reply-preview .tutup {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #65676b;
+    padding: 0 4px;
+    margin-left: 8px;
+}
+
+/* Pesan yang Dibalas di dalam chat */
+.pesan-dibalas {
+    background: rgba(37, 99, 235, 0.08);
+    border-left: 3px solid #2563eb;
+    padding: 6px 10px;
+    margin-bottom: 4px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 280px;
+}
+
+/* Form Kirim */
+.form-kirim {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 8px 12px;
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#inputPesan {
+    flex: 1;
+    padding: 10px 16px;
+    font-size: 15px;
+    border: 1px solid #ddd;
+    border-radius: 24px;
+    outline: none;
+}
+
+#inputPesan:focus {
+    border-color: #2563eb;
+}
+
+.btn-kirim {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+
 
         /* ============== ALERT KUSTOM ============== */
         .overlay-alert {
@@ -362,6 +449,88 @@
     box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
 }
 
+/* Preview Balasan di Atas Kotak Ketik */
+.reply-preview {
+    background: #e5e7eb;
+    border-left: 4px solid #3b82f6;
+    padding: 8px 12px;
+    margin: 0 0 8px 0;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    transition: all 0.2s ease;
+}
+
+.reply-preview.hidden {
+    display: none;
+    margin: 0;
+    padding: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.reply-preview .teks {
+    font-size: 13px;
+    color: #4b5563;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.reply-preview .nama {
+    font-weight: bold;
+    font-size: 12px;
+    color: #1f2937;
+    margin-bottom: 2px;
+}
+
+.reply-preview .tutup {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 0 6px;
+    line-height: 1;
+}
+
+
+/* Pesan yang Dibalas di Dalam Chat */
+.pesan-dibalas {
+    background: #dbeafe;
+    border-left: 3px solid #3b82f6;
+    padding: 6px 10px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #374151;
+}
+
+/* Area Pesan Bisa Diklik 2x untuk Balas */
+.klik-balas {
+    cursor: pointer;
+}
+/* Pastikan elemen tersembunyi benar-benar tidak mengambil ruang */
+.hidden {
+    display: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+
+/* Atur jarak kotak ketik agar rapat */
+.form-kirim {
+    margin-top: 8px;
+    gap: 0;
+}
+
+#previewBalasan {
+    margin-bottom: 4px;
+}
 
     </style>
 </head>
@@ -417,12 +586,29 @@
 
         <div id="daftarChat" class="chat-container"></div>
 
-        <div class="form-kirim">
-            <input type="text" id="inputPesan" placeholder="Ketik pesan kamu..." maxlength="500" on-keypress="cekEnter(event)">
-            <button class="btn-kirim" onclick="kirimPesan()">
-                <i class="fa-solid fa-paper-plane"></i>
-            </button>
+<div class="form-kirim">
+    <!-- Preview Balasan - muncul di ATAS kotak ketik -->
+    <div id="previewBalasan" class="reply-preview hidden">
+        <div class="isi-balasan">
+            <div class="nama" id="balasKeNama"></div>
+            <div class="teks" id="balasKeTeks"></div>
         </div>
+        <button class="tutup" onclick="batalBalas()">×</button>
+    </div>
+    
+    <!-- Kotak Ketik + Tombol -->
+    <div class="input-wrapper">
+        <input type="text" id="inputPesan" placeholder="Ketik pesan...">
+        <button class="btn-kirim" onclick="kirimPesan()">
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
+
+
+
+
+
     </div>
 
 <script>
@@ -437,6 +623,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // Variabel Global
 let namaPengguna = localStorage.getItem('namaPengguna') || null;
 let deviceId = localStorage.getItem('deviceId') || null;
+let sedangMembalas = null; // Menyimpan pesan yang akan dibalas
 let lastDateChecked = null;
 let totalPesanSaatIni = 0;
 let scrollOtomatis = true;
@@ -662,11 +849,21 @@ function tambahPesanUI(pesan) {
     const elemen = document.createElement('div');
     
     const adalahSaya = pesan.nama === namaPengguna;
-    const isAdmin = pesan.nama === 'Yobel'; // Ganti dengan nama admin yang kamu mau
+    const isAdmin = pesan.nama === 'Yobel';
     
-    elemen.className = `pesan-wrapper pesan-umum ${adalahSaya ? 'pesan-saya' : ''}`;
+    elemen.className = `pesan-wrapper pesan-umum ${adalahSaya ? 'pesan-saya' : ''} klik-balas`;
+    elemen.dataset.nama = pesan.nama;
+    elemen.dataset.isi = pesan.pesan;
+    elemen.setAttribute('ondblclick', 'pilihBalasan(this)');
     
     const badgeAdmin = isAdmin ? `<span class="badge-admin">ADMIN</span>` : '';
+    
+    const adaBalasan = pesan.dibalas_ke_nama && pesan.dibalas_ke_pesan;
+    const balasHTML = adaBalasan ? `
+        <div class="pesan-dibalas">
+            <strong>${escapeHtml(pesan.dibalas_ke_nama)}:</strong> ${escapeHtml(pesan.dibalas_ke_pesan)}
+        </div>
+    ` : '';
     
     elemen.innerHTML = `
         <div class="info-pengirim">
@@ -674,12 +871,14 @@ function tambahPesanUI(pesan) {
             <span class="waktu-pesan">${formatWaktu(pesan.waktu)}</span>
             ${adalahSaya ? `<span class="nama-pengirim">${escapeHtml(pesan.nama)}${badgeAdmin}</span>` : ''}
         </div>
+        ${balasHTML}
         <div class="kotak-pesan">
             <div class="isi-pesan">${escapeHtml(pesan.pesan)}</div>
         </div>
     `;
     daftarChat.appendChild(elemen);
 }
+
 
 
 
@@ -758,6 +957,7 @@ function cekEnter(event) {
 
 // ============== INISIALISASI ==============
 async function initChat() {
+    document.getElementById('previewBalasan').style = 'margin:0; padding:0; border:none; height:0; overflow:hidden;';
     document.getElementById('tanggalHariIni').innerHTML = `<i class="fa-solid fa-calendar"></i> ${dapatkanTanggalHariIni()}`;
     
     // ✅ CEK DULU — sebelum muat pesan
@@ -788,6 +988,69 @@ async function initChat() {
     });
     
     window.addEventListener('focus', perbaruiStatusOnline);
+}
+
+// Pilih pesan untuk dibalas (tekan 2x cepat pada pesan)
+function pilihBalasan(elemen) {
+    sedangMembalas = {
+        nama: elemen.dataset.nama,
+        isi: elemen.dataset.isi
+    };
+    
+    document.getElementById('balasKeNama').textContent = 'Membalas: ' + sedangMembalas.nama;
+    document.getElementById('balasKeTeks').textContent = sedangMembalas.isi;
+    
+    // Tampilkan — hapus style kosongnya
+    const preview = document.getElementById('previewBalasan');
+    preview.classList.remove('hidden');
+    preview.style = ''; // hapus style kosong saat tampil
+    
+    document.getElementById('inputPesan').focus();
+}
+
+function batalBalas() {
+    sedangMembalas = null;
+    const preview = document.getElementById('previewBalasan');
+    preview.classList.add('hidden');
+    // Sembunyikan — kembalikan style kosongnya
+    preview.style = 'margin:0; padding:0; border:none; height:0; overflow:hidden;';
+}
+
+
+// Ubah fungsi kirimPesan untuk menyertakan balasan
+async function kirimPesan() {
+    const input = document.getElementById('inputPesan');
+    const teks = input.value.trim();
+    
+    if (!teks) return;
+    
+    try {
+        const dataKirim = {
+            nama: namaPengguna,
+            pesan: teks
+        };
+        
+        // Jika sedang membalas, tambahkan info balasan
+        if (sedangMembalas) {
+            dataKirim.dibalas_ke_nama = sedangMembalas.nama;
+            dataKirim.dibalas_ke_pesan = sedangMembalas.isi;
+        }
+        
+        const { error } = await sb
+            .from('pesan')
+            .insert(dataKirim);
+        
+        if (error) throw error;
+        input.value = '';
+        scrollOtomatis = true;
+        
+        // Sembunyikan preview balasan
+        batalBalas();
+        
+        setTimeout(() => muatPesan(), 300);
+    } catch (e) {
+        tampilkanAlert('Gagal mengirim pesan: ' + e.message, 'Error');
+    }
 }
 
 
