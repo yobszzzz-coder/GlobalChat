@@ -571,8 +571,331 @@ body {
 }
 
 
+/* ============== ICON & TOMBOL WALLPAPER ============== */
+ .btn-icon i {
+     font-size: 16px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+ }
+ #btnWallpaper {
+     transition: transform 0.2s;
+ }
+ #btnWallpaper:active {
+     transform: scale(0.92);
+ }
+ /* Popup Wallpaper */
+ .overlay-alert {
+     position: fixed;
+     inset: 0;
+     background: rgba(0, 0, 0, 0.55);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     z-index: 2000;
+     backdrop-filter: blur(40px);
+     -webkit-backdrop-filter: blur(40px);
+ }
+ .overlay-alert.hidden {
+     display: none !important;
+ }
+ .kotak-alert {
+     background: var(--ios-latar-kedua);
+     border: 1px solid var(--ios-abu);
+     border-radius: 16px;
+     padding: 24px 20px;
+     max-width: 320px;
+     width: 90%;
+     text-align: center;
+ }
+ .kotak-alert h3 {
+     font-size: 18px;
+     font-weight: 600;
+     margin-bottom: 8px;
+     color: var(--ios-putih-teks);
+ }
+ .kotak-alert p {
+     font-size: 14px;
+     margin-bottom: 20px;
+     color: var(--ios-abu-teks);
+ }
+ .wallpaper-btn-group {
+     display: flex;
+     flex-direction: column;
+     gap: 12px;
+     margin-top: 8px;
+ }
+ .wallpaper-option-btn {
+     background: var(--ios-biru);
+     color: white;
+     border: none;
+     padding: 12px;
+     border-radius: 10px;
+     font-size: 16px;
+     cursor: pointer;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     gap: 8px;
+     width: 100%;
+ }
+ .wallpaper-option-btn:nth-child(2) {
+     background: var(--ios-abu-terang);
+     color: var(--ios-putih-teks);
+ }
+ .wallpaper-option-btn:active {
+     opacity: 0.85;
+ }
+ .btn-tutup-popup {
+     background: none;
+     color: var(--ios-biru);
+     border: none;
+     padding: 8px;
+     margin-top: 8px;
+     font-size: 16px;
+     cursor: pointer;
+ }
+ /* Pastikan isi chat di atas background animasi */
+ .chat-container > * {
+     position: relative;
+     z-index: 1;
+ }
+
+/* ============== ALERT KUSTOM ============== */
+.alert-kustom-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+.alert-kustom-overlay.tampil {
+    opacity: 1;
+    visibility: visible;
+}
+
+.alert-kustom-kotak {
+    background: var(--ios-latar-kedua, #1c1c1e);
+    border: 1px solid var(--ios-abu, #38383a);
+    border-radius: 16px;
+    padding: 24px 20px;
+    max-width: 300px;
+    width: 90%;
+    text-align: center;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+.alert-kustom-overlay.tampil .alert-kustom-kotak {
+    transform: scale(1);
+}
+
+.alert-kustom-ikon {
+    font-size: 40px;
+    color: #facc15;
+    margin-bottom: 12px;
+}
+
+.alert-kustom-judul {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ios-putih-teks, #ffffff);
+    margin-bottom: 8px;
+}
+
+.alert-kustom-pesan {
+    font-size: 14px;
+    color: var(--ios-abu-teks, #8e8e93);
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.alert-kustom-tombol {
+    background: var(--ios-biru, #007aff);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+.alert-kustom-tombol:active {
+    opacity: 0.8;
+}
+
+/* ============== TRANSI WALLPAPER HALUS ============== */
+.chat-container {
+    transition: background-color 0.5s ease, background-image 0.6s ease-in-out, opacity 0.4s ease;
+}
+
+.chat-container::before {
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+/* ============== POPUP PRATINJAU FOTO ============== */
+.popup-pratinjau-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2500;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+.popup-pratinjau-overlay.tampil {
+    opacity: 1;
+    visibility: visible;
+}
+
+.popup-pratinjau-kotak {
+    background: var(--ios-latar-kedua, #1c1c1e);
+    border: 1px solid var(--ios-abu, #38383a);
+    border-radius: 16px;
+    padding: 20px;
+    max-width: 340px;
+    width: 90%;
+    text-align: center;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+.popup-pratinjau-overlay.tampil .popup-pratinjau-kotak {
+    transform: scale(1);
+}
+
+.popup-pratinjau-judul {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ios-putih-teks, #ffffff);
+    margin-bottom: 16px;
+}
+
+.wadah-pratinjau {
+    width: 100%;
+    aspect-ratio: 9/16;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    position: relative;
+    touch-action: none;
+    user-select: none;
+    
+    /* Garis penanda tepi */
+    box-shadow: 
+        inset 0 0 0 1px rgba(255, 255, 255, 0.25),
+        inset 4px 4px 0 rgba(255, 255, 255, 0.15),
+        inset -4px -4px 0 rgba(255, 255, 255, 0.15);
+}
+
+.foto-pratinjau {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform-origin: center center;
+    will-change: transform;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Kontrol Zoom */
+.kontrol-zoom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 0 10px;
+}
+
+.btn-zoom {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: var(--ios-abu-terang, #2c2c2e);
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease;
+}
+.btn-zoom:active {
+    opacity: 0.8;
+}
+
+.slider-zoom {
+    flex: 1;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--ios-abu-terang, #2c2c2e);
+    border-radius: 3px;
+    outline: none;
+}
+.slider-zoom::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--ios-biru, #007aff);
+    cursor: pointer;
+}
 
 
+.instruksi-geser {
+    font-size: 13px;
+    color: var(--ios-abu-teks, #8e8e93);
+    margin-bottom: 16px;
+}
+
+.tombol-pratinjau-grup {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-batal-pratinjau {
+    flex: 1;
+    background: var(--ios-abu-terang, #2c2c2e);
+    color: var(--ios-putih-teks, #ffffff);
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+.btn-terapkan-pratinjau {
+    flex: 1;
+    background: var(--ios-biru, #007aff);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+.btn-batal-pratinjau:active,
+.btn-terapkan-pratinjau:active {
+    opacity: 0.8;
+}
 
     </style>
 </head>
@@ -597,7 +920,7 @@ body {
         </div>
     </div>
 
-    <!-- KONTEN UTAMA -->
+<!-- KONTEN UTAMA -->
     <div id="kontenUtama" class="hidden">
         <div class="header-wrapper">
             <div class="header">
@@ -616,6 +939,12 @@ body {
                         <button class="btn-icon" onclick="refreshChat()" title="Refresh Chat">
                             <i class="fa-solid fa-rotate-right"></i>
                         </button>
+                        <!-- Tombol Wallpaper -->
+ <button class="btn-icon" id="btnWallpaper" title="Ganti Wallpaper">
+     <i class="fa-solid fa-image"></i>
+ </button>
+ <!-- Input File Tersembunyi -->
+ <input type="file" id="inputFotoGaleri" accept="image/*" style="display:none;">
                     </div>
                 </div>
                 <div class="info-bar">
@@ -627,6 +956,7 @@ body {
         </div>
 
         <div id="daftarChat" class="chat-container"></div>
+
 
 <div class="form-kirim">
     <!-- Preview Balasan - muncul di ATAS kotak ketik -->
@@ -647,11 +977,64 @@ body {
     </div>
 </div>
 
-
-
-
-
+<!-- Popup Pilih Wallpaper -->
+ <div class="overlay-alert hidden" id="popupWallpaper">
+     <div class="kotak-alert">
+         <h3>Pilih Wallpaper</h3>
+         <p>Pilih tampilan background chat</p>
+         
+         <div class="wallpaper-btn-group">
+             <button class="wallpaper-option-btn" id="btnPilihGaleri">
+                 <i class="fa-solid fa-camera"></i>
+                 Pilih dari Galeri
+             </button>
+             <button class="wallpaper-option-btn" id="btnWallpaperDefault">
+                 <i class="fa-solid fa-border-all"></i>
+                 Wallpaper Default
+             </button>
+             <button class="btn-tutup-popup" id="btnTutupPopup">Batal</button>
+         </div>
+     </div>
+ </div>
     </div>
+<!-- Alert Kustom: Hanya Gambar -->
+<div class="alert-kustom-overlay" id="alertFormatTidakValid">
+    <div class="alert-kustom-kotak">
+        <div class="alert-kustom-ikon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div class="alert-kustom-judul">Format Tidak Didukung</div>
+        <div class="alert-kustom-pesan">Maaf, hanya boleh memilih file gambar (JPG, PNG, GIF, WebP). Video atau file lain tidak bisa digunakan.</div>
+        <button class="alert-kustom-tombol" id="btnTutupAlert">Mengerti</button>
+    </div>
+</div>
+<!-- Popup Pratinjau & Atur Posisi Foto -->
+<div class="popup-pratinjau-overlay hidden" id="popupPratinjau">
+    <div class="popup-pratinjau-kotak">
+        <div class="popup-pratinjau-judul">Sesuaikan Foto</div>
+        <div class="wadah-pratinjau" id="wadahPratinjau">
+            <img class="foto-pratinjau" id="fotoPratinjau" alt="Pratinjau">
+        </div>
+        <div class="instruksi-geser">👆 Geser untuk pindahkan - Cubit atau gunakan tombol untuk zoom</div>
+        
+        <!-- Kontrol Zoom Baru -->
+        <div class="kontrol-zoom">
+            <button class="btn-zoom" id="btnZoomKeluar">
+                <i class="fa-solid fa-magnifying-glass-minus"></i>
+            </button>
+            <input type="range" class="slider-zoom" id="sliderZoom" min="1" max="3" step="0.05" value="1">
+            <button class="btn-zoom" id="btnZoomMasuk">
+                <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </button>
+        </div>
+        
+        <div class="tombol-pratinjau-grup">
+            <button class="btn-batal-pratinjau" id="btnBatalPratinjau">Batal</button>
+            <button class="btn-terapkan-pratinjau" id="btnTerapkanPratinjau">Gunakan Foto</button>
+        </div>
+    </div>
+</div>
+
 
 <script>
 // ==============================================
@@ -1107,6 +1490,301 @@ async function kirimPesan() {
     }
 }
     
+// Elemen
+ document.addEventListener('DOMContentLoaded', function() {
+    const btnWallpaper = document.getElementById('btnWallpaper');
+    const popupWallpaper = document.getElementById('popupWallpaper');
+    const btnPilihGaleri = document.getElementById('btnPilihGaleri');
+    const btnWallpaperDefault = document.getElementById('btnWallpaperDefault');
+    const btnTutupPopup = document.getElementById('btnTutupPopup');
+    const inputFotoGaleri = document.getElementById('inputFotoGaleri');
+    const chatContainer = document.querySelector('.chat-container');
+    
+    // Elemen Alert Kustom
+    const alertFormatTidakValid = document.getElementById('alertFormatTidakValid');
+    const btnTutupAlert = document.getElementById('btnTutupAlert');
+    
+    // Elemen Popup Pratinjau
+    const popupPratinjau = document.getElementById('popupPratinjau');
+    const fotoPratinjau = document.getElementById('fotoPratinjau');
+    const btnBatalPratinjau = document.getElementById('btnBatalPratinjau');
+    const btnTerapkanPratinjau = document.getElementById('btnTerapkanPratinjau');
+    const sliderZoom = document.getElementById('sliderZoom');
+    const btnZoomMasuk = document.getElementById('btnZoomMasuk');
+    const btnZoomKeluar = document.getElementById('btnZoomKeluar');
+    
+    // Variabel untuk posisi & zoom foto
+    let fotoTerpilihUrl = null;
+    let offsetX = 0, offsetY = 0;
+    let startX = 0, startY = 0;
+    let finalX = 0, finalY = 0;
+    let scale = 1;
+    let sedangMenahan = false;
+    let jarakAwalCubit = 0;
+    let scaleAwalCubit = 1;
+
+    // Fungsi tampilkan alert kustom
+    function tampilkanAlert(elemenAlert) {
+        if (elemenAlert) elemenAlert.classList.add('tampil');
+    }
+    function tutupAlert(elemenAlert) {
+        if (elemenAlert) elemenAlert.classList.remove('tampil');
+    }
+
+    // Tutup alert
+    if (btnTutupAlert && alertFormatTidakValid) {
+        btnTutupAlert.addEventListener('click', () => tutupAlert(alertFormatTidakValid));
+        alertFormatTidakValid.addEventListener('click', (e) => {
+            if (e.target === alertFormatTidakValid) tutupAlert(alertFormatTidakValid);
+        });
+    }
+
+    // Tampilkan wallpaper tersimpan
+    const tersimpan = localStorage.getItem('wallpaperChat');
+    const posisiTersimpan = localStorage.getItem('posisiFoto');
+    const skalaTersimpan = localStorage.getItem('skalaFoto');
+    if (!tersimpan || tersimpan === 'default') {
+        terapkanWallpaperDefault();
+    } else {
+        terapkanWallpaperGambar(tersimpan, posisiTersimpan, skalaTersimpan);
+    }
+
+    // Buka Popup Wallpaper
+    if (btnWallpaper && popupWallpaper) {
+        btnWallpaper.addEventListener('click', () => {
+            popupWallpaper.classList.remove('hidden');
+        });
+    }
+
+    // Tutup Popup Wallpaper
+    if (btnTutupPopup && popupWallpaper) {
+        btnTutupPopup.addEventListener('click', () => {
+            popupWallpaper.classList.add('hidden');
+        });
+        popupWallpaper.addEventListener('click', (e) => {
+            if (e.target === popupWallpaper) popupWallpaper.classList.add('hidden');
+        });
+    }
+
+    // Pilih dari Galeri
+    if (btnPilihGaleri && inputFotoGaleri && popupWallpaper) {
+        btnPilihGaleri.addEventListener('click', () => {
+            inputFotoGaleri.click();
+            popupWallpaper.classList.add('hidden');
+        });
+    }
+
+    // Saat foto dipilih → tampilkan pratinjau
+    if (inputFotoGaleri) {
+        inputFotoGaleri.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                tampilkanAlert(alertFormatTidakValid);
+                inputFotoGaleri.value = '';
+                return;
+            }
+
+            const pembaca = new FileReader();
+            pembaca.onload = function(acara) {
+                fotoTerpilihUrl = acara.target.result;
+                fotoPratinjau.src = fotoTerpilihUrl;
+                // Reset posisi & skala
+                finalX = 0; finalY = 0; scale = 1;
+                sliderZoom.value = 1;
+                perbaruiTransformasi();
+                // Tampilkan popup pratinjau
+                popupPratinjau.classList.remove('hidden');
+                setTimeout(() => popupPratinjau.classList.add('tampil'), 10);
+            };
+            pembaca.readAsDataURL(file);
+            inputFotoGaleri.value = '';
+        });
+    }
+
+    // Fungsi perbarui posisi & skala foto
+    function perbaruiTransformasi() {
+        fotoPratinjau.style.transform = `translate(-50%, -50%) translate(${finalX}px, ${finalY}px) scale(${scale})`;
+    }
+
+    // === GESER FOTO ===
+    fotoPratinjau.addEventListener('mousedown', mulaiTahan);
+    document.addEventListener('mousemove', geser);
+    document.addEventListener('mouseup', lepasTahan);
+    
+    fotoPratinjau.addEventListener('touchstart', mulaiTahan, { passive: false });
+    document.addEventListener('touchmove', geser, { passive: false });
+    document.addEventListener('touchend', lepasTahan);
+    
+    // Zoom dengan cubit di layar HP
+    fotoPratinjau.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            jarakAwalCubit = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            scaleAwalCubit = scale;
+        }
+    }, { passive: false });
+    
+    fotoPratinjau.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            const jarakSekarang = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            const rasio = jarakSekarang / jarakAwalCubit;
+            scale = Math.min(Math.max(1, scaleAwalCubit * rasio), 3);
+            sliderZoom.value = scale;
+            perbaruiTransformasi();
+        }
+    }, { passive: false });
+
+    function mulaiTahan(e) {
+        if (e.touches && e.touches.length > 1) return;
+        sedangMenahan = true;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        startX = clientX - finalX;
+        startY = clientY - finalY;
+    }
+
+    function geser(e) {
+        if (!sedangMenahan) return;
+        if (e.touches && e.touches.length > 1) return;
+        e.preventDefault();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        finalX = clientX - startX;
+        finalY = clientY - startY;
+        perbaruiTransformasi();
+    }
+
+    function lepasTahan() {
+        sedangMenahan = false;
+    }
+
+    // === KONTROL ZOOM ===
+    if (sliderZoom) {
+        sliderZoom.addEventListener('input', () => {
+            scale = parseFloat(sliderZoom.value);
+            perbaruiTransformasi();
+        });
+    }
+    
+    if (btnZoomMasuk) {
+        btnZoomMasuk.addEventListener('click', () => {
+            scale = Math.min(scale + 0.15, 3);
+            sliderZoom.value = scale;
+            perbaruiTransformasi();
+        });
+    }
+    
+    if (btnZoomKeluar) {
+        btnZoomKeluar.addEventListener('click', () => {
+            scale = Math.max(scale - 0.15, 1);
+            sliderZoom.value = scale;
+            perbaruiTransformasi();
+        });
+    }
+
+    // Batal pratinjau
+    if (btnBatalPratinjau && popupPratinjau) {
+        btnBatalPratinjau.addEventListener('click', () => {
+            popupPratinjau.classList.remove('tampil');
+            setTimeout(() => popupPratinjau.classList.add('hidden'), 300);
+            fotoTerpilihUrl = null;
+        });
+    }
+
+    // Terapkan foto setelah disesuaikan
+    if (btnTerapkanPratinjau && popupPratinjau) {
+        btnTerapkanPratinjau.addEventListener('click', () => {
+            localStorage.setItem('posisiFoto', JSON.stringify({ x: finalX, y: finalY }));
+            localStorage.setItem('skalaFoto', scale);
+            terapkanWallpaperGambar(fotoTerpilihUrl, { x: finalX, y: finalY }, scale);
+            popupPratinjau.classList.remove('tampil');
+            setTimeout(() => popupPratinjau.classList.add('hidden'), 300);
+        });
+    }
+
+    // Langsung ganti ke Default
+    if (btnWallpaperDefault && popupWallpaper) {
+        btnWallpaperDefault.addEventListener('click', () => {
+            localStorage.setItem('wallpaperChat', 'default');
+            localStorage.removeItem('posisiFoto');
+            localStorage.removeItem('skalaFoto');
+            terapkanWallpaperDefault();
+            popupWallpaper.classList.add('hidden');
+        });
+    }
+
+    // Terapkan Wallpaper Gambar dengan transisi halus
+    function terapkanWallpaperGambar(url, posisi, skala) {
+        if (!chatContainer || !url) return;
+        
+        const x = posisi?.x || 0;
+        const y = posisi?.y || 0;
+        const z = skala || 1;
+        
+        chatContainer.style.opacity = '0';
+        
+        setTimeout(() => {
+            chatContainer.style.backgroundColor = 'transparent';
+            chatContainer.style.backgroundImage = `url('${url}')`;
+            chatContainer.style.backgroundSize = `${100 * z}% auto`;
+            chatContainer.style.backgroundPosition = `calc(50% + ${x}px) calc(50% + ${y}px)`;
+            chatContainer.style.backgroundRepeat = 'no-repeat';
+            chatContainer.style.backgroundAttachment = 'local';
+            
+            // Sembunyikan grid
+            let styleSembunyi = document.getElementById('style-sembunyi-grid');
+            if (!styleSembunyi) {
+                styleSembunyi = document.createElement('style');
+                styleSembunyi.id = 'style-sembunyi-grid';
+                document.head.appendChild(styleSembunyi);
+            }
+            styleSembunyi.textContent = `
+                .chat-container::before {
+                    opacity: 0 !important;
+                    transition: opacity 0.5s ease !important;
+                    visibility: hidden;
+                }
+            `;
+            
+            localStorage.setItem('wallpaperChat', url);
+            
+            setTimeout(() => {
+                chatContainer.style.opacity = '1';
+            }, 150);
+        }, 250);
+    }
+
+    // Kembali ke Wallpaper Default
+    function terapkanWallpaperDefault() {
+        if (!chatContainer) return;
+        
+        chatContainer.style.opacity = '0';
+        
+        setTimeout(() => {
+            chatContainer.style.backgroundColor = '';
+            chatContainer.style.backgroundImage = '';
+            chatContainer.style.backgroundSize = '';
+            chatContainer.style.backgroundPosition = '';
+            chatContainer.style.backgroundRepeat = '';
+            
+            const styleSembunyi = document.getElementById('style-sembunyi-grid');
+            if (styleSembunyi) styleSembunyi.remove();
+            
+            setTimeout(() => {
+                chatContainer.style.opacity = '1';
+            }, 150);
+        }, 250);
+    }
+});
 
 
 // ============== MULAI ==============
@@ -1121,4 +1799,3 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-
